@@ -1,0 +1,2144 @@
+{
+  "version": 1,
+  "problems": [
+    {
+      "id": "od-5e34daac53f3",
+      "title": "会议室占用时间",
+      "collection": "ABCD卷",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "verified",
+      "solutionReviewStatus": "candidate",
+      "publicSampleCount": 2,
+      "hiddenTestCount": 2,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-71a5033ee94c",
+      "title": "跳格子3",
+      "collection": "2025 E卷-2025A卷",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "verified",
+      "solutionReviewStatus": "candidate",
+      "publicSampleCount": 2,
+      "hiddenTestCount": 2,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-f5d47011b9f8",
+      "title": "整数对最小和",
+      "collection": "2025 E卷-2025A卷",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "verified",
+      "solutionReviewStatus": "candidate",
+      "publicSampleCount": 2,
+      "hiddenTestCount": 2,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-b53d53c3e9d3",
+      "title": "IPv4地址转换成整数",
+      "collection": "2025 E卷-2025A卷",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "verified",
+      "solutionReviewStatus": "candidate",
+      "publicSampleCount": 2,
+      "hiddenTestCount": 2,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-7380421e88aa",
+      "title": "(100分)- 比赛评分",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-138f12825eaf",
+      "title": "(100分)- 查找单入口空闲区域",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "array",
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-06b885e2beb3",
+      "title": "(100分)- 查找接口成功率最优时间段",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-0ebe258c375d",
+      "title": "(100分)- 乘坐保密电梯",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-329dfdcafde7",
+      "title": "(100分)- 代码编辑器",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-7106f759127f",
+      "title": "(100分)- 端口合并",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-82e46a1d587f",
+      "title": "(100分)- 对称美学",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-c8c2a1ec244c",
+      "title": "(100分)- 火星文计算2",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "sorting"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-f62fb2c9a73f",
+      "title": "（100分)- 货币单位换算",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-2f358bf129dc",
+      "title": "(100分)- 精准核酸检测",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-ea9e9a4f0b49",
+      "title": "(100分)- 矩阵扩散",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-ac6bf3266b0a",
+      "title": "(100分)- 流水线",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-893d5cd0c475",
+      "title": "(100分)- 模拟消息队列",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "sorting",
+        "stack-queue"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d2e4e89b454b",
+      "title": "(100分)- 数组连续和",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d23cfd97705c",
+      "title": "(100分)- 提取字符串中的最长合法简单数学表达式",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "stack-queue",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-7ae7b520a033",
+      "title": "(100分)- 跳房子II",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "greedy",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-36384a65909e",
+      "title": "(100分)- 停车场车辆统计",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-18e750193892",
+      "title": "(100分)- 完全二叉树非叶子部分后序遍历",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "tree",
+        "search",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-a3ce3bc6c1e0",
+      "title": "(100分)- 微服务的集成测试",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-1b904bbf6048",
+      "title": "(100分)- 相对开音节",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d98ee78058ce",
+      "title": "(100分)- 消消乐游戏",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-93746b8d2c3f",
+      "title": "(100分)- 异常的打卡记录",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-0866a13cf0f6",
+      "title": "(100分)- 游戏分组",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-cc0b1c264f23",
+      "title": "(100分)- 执行任务赚积分",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d42ced51460a",
+      "title": "(100分)- 字符串分割",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-5c662778a71d",
+      "title": "(100分)- 字符串筛选排序",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "sorting"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-4b7243b4c854",
+      "title": "(100分)- 最小调整顺序次数、特异性双端队列",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "stack-queue",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-8be42fc5aa0b",
+      "title": "(100分)- 最长的顺子（旧卷200分，25年新卷归为100分值）",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-17040339d355",
+      "title": "(200分)- 5G网络建设",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-09c9a72ec102",
+      "title": "(200分)- 查找一个有向网络的头节点和尾节点",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-ea307365c60b",
+      "title": "(200分)- 出错的或电路",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-ab9328324667",
+      "title": "(200分)- 单词搜索",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "search"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-035548f8d232",
+      "title": "(200分)- 叠积木",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-76c2ba5efab8",
+      "title": "(200分)- 二叉树的广度优先遍历",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "tree",
+        "search",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-33945190a2fe",
+      "title": "(200分)- 二维伞的雨滴效应",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "tree",
+        "graph",
+        "search"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-f1e0e19275f4",
+      "title": "(200分)- 分积木",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-a2bfd5ee36f0",
+      "title": "(200分)- 机器人走迷宫",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-99685ccaafa6",
+      "title": "(200分)- 几何平均值最大子数组",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-5692cf791306",
+      "title": "(200分)- 计算误码率",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-bd1a6b463dec",
+      "title": "(200分)- 简单的解压缩算法",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "stack-queue"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-0e5336d04747",
+      "title": "(200分)- 矩阵匹配",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-5ac495ff54bc",
+      "title": "(200分)- 开放日活动、取出尽量少的球",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-6883e32af048",
+      "title": "(200分)- 快递投放问题",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-67669eb640c0",
+      "title": "(200分)- 快递员的烦恼",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-5aa32ca5787c",
+      "title": "(200分)- 连续出牌数量",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-8cc017cda069",
+      "title": "(200分)- 两个字符串间的最短路径问题",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "array",
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-5f35f26ad2de",
+      "title": "(200分)- 启动多任务排序(1)",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "sorting"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-e4ca1a0192c7",
+      "title": "(200分)- 抢7游戏",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-bc5f4f278742",
+      "title": "(200分)- 亲子游戏",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "graph",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-64bb97addb5e",
+      "title": "(200分)- 区间交集",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d52937c06bc2",
+      "title": "(200分)- 竖直四子棋",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-fd5f968b8dc3",
+      "title": "(200分)- 数字游戏",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-ebac85de16e9",
+      "title": "(200分)- 贪吃蛇",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-9a5232dbc372",
+      "title": "(200分)- 贪心歌手",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-59e67abec174",
+      "title": "(200分)- 田忌赛马",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-2b9ceb413858",
+      "title": "(200分)- 跳格子2",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-34c39ee9912d",
+      "title": "(200分)- 文件缓存系统",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-63b99029a224",
+      "title": "(200分)- 文件缓存系统_20260208_132920",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-879c3670b7a3",
+      "title": "(200分)- 信道分配",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-f587c9b21cdb",
+      "title": "(200分)- 寻找最大价值的矿堆",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "graph",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-f47d938ed13c",
+      "title": "(200分)- 寻找最优的路测线路",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "hash"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-601316cdff7b",
+      "title": "(200分)- 优雅子数组",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-192a42e90381",
+      "title": "(200分)- 员工派遣",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-77c999cbb7ab",
+      "title": "(200分)- 字符串化繁为简",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "stack-queue"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-7ccebb06cd57",
+      "title": "(200分)- 字符串解密",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-57e08a495f1d",
+      "title": "(200分)- 字符串拼接",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-8197ce668ee7",
+      "title": "(200分)- 组合出合法最小数",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "array",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-9519e6a835dd",
+      "title": "(200分)- 组装最大可靠性设备",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-8a8f2f2ad7ee",
+      "title": "(200分)- 最多几个直角三角形",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-228ed9ec8aaa",
+      "title": "(200分)- 最佳对手",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-51e2ae506671",
+      "title": "(200分)- 最小矩阵宽度",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-a183ae83097c",
+      "title": "(200分)- 最小矩阵宽度_20260318_230612",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-6f84068af520",
+      "title": "(200分)- Wonderland游乐园",
+      "collection": "2025.12月-2026.3月【双机位C卷】",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-020d1279ce6b",
+      "title": "(2025,B,200分)- 返回矩阵中非1的元素个数",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-31e0336632ad",
+      "title": "(2025B,100分)- 打印机队列",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "sorting",
+        "stack-queue"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-e74f8ce240a0",
+      "title": "(2025B,100分)- 拼接URL",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "hash"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-739113a30efc",
+      "title": "(2025B,100分)- 数组组成的最小数字",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-e8bb74176402",
+      "title": "(2025B,100分)- 统计射击比赛成绩",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-7460e476d8c0",
+      "title": "(2025B,100分)- 游戏分组",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-760d5c9d3aa2",
+      "title": "(2025B,100分)- 整理扑克牌",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-c347b4288083",
+      "title": "(2025B,100分)- 字符串序列判定",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "string",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-e10cf9891ab6",
+      "title": "(2025B,100分)- 最大数字",
+      "collection": "2025B卷",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-a33307d81d65",
+      "title": "(2025B,200分)- 猜密码",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "sorting",
+        "math",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-0125349dec88",
+      "title": "(2025B,200分)- 服务中心选址",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-6311a976929e",
+      "title": "(2025B,200分)- 欢乐的周末",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-3c317b488580",
+      "title": "(2025B,200分)- 基站维护工程师",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "simulation"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-85b683437411",
+      "title": "(2025B,200分)- 区间交集",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-52db4aad37b5",
+      "title": "(2025B,200分)- 士兵过河",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-95a12e6df8bb",
+      "title": "(2025B,200分)- 贪吃的猴子",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "greedy"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d4292a8b8af7",
+      "title": "(2025B,200分)- 天然蓄水库",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-c5cd572c796d",
+      "title": "(2025B,200分)- 无向图染色",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "graph"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-d191757e84ef",
+      "title": "(2025B,200分)- 寻找最大价值的矿堆",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "graph",
+        "interval"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-91f9571ca5e5",
+      "title": "(2025B,200分)- 中文分词模拟器",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "string"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-7b29e3eadc7e",
+      "title": "(2025B,200分)- 最小循环子数组",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "cpp",
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing",
+        "array"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-ae351eae5684",
+      "title": "(2025B,200分)- Excel单元格数值统计",
+      "collection": "2025B卷",
+      "score": 200,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "io-parsing"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    },
+    {
+      "id": "od-df08f8bccf55",
+      "title": "(A卷,100分-原A卷老题)- 处理器问题",
+      "collection": "2025 E卷-2025A卷",
+      "score": 100,
+      "languages": [
+        "java",
+        "javascript",
+        "python"
+      ],
+      "skills": [
+        "array",
+        "graph",
+        "math"
+      ],
+      "reviewStatus": "candidate",
+      "contentReviewStatus": "unreviewed",
+      "solutionReviewStatus": "unreviewed",
+      "publicSampleCount": 0,
+      "hiddenTestCount": 0,
+      "skillReviewStatus": "inferred"
+    }
+  ]
+}

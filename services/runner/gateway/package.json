@@ -1,0 +1,31 @@
+{
+  "name": "od-runner-gateway",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/start.ts",
+    "start": "tsx src/start.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.0",
+    "@fastify/rate-limit": "^10.0.0",
+    "fastify": "^5.0.0",
+    "pg": "^8.23.0",
+    "tree-sitter": "^0.21.1",
+    "tree-sitter-cpp": "^0.23.4",
+    "tree-sitter-java": "^0.23.5",
+    "tree-sitter-javascript": "^0.23.1",
+    "tree-sitter-python": "^0.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.21.0",
+    "pg-mem": "^3.0.14",
+    "tsx": "^4.0.0",
+    "typescript": "~6.0.2",
+    "vitest": "^4.1.0"
+  }
+}

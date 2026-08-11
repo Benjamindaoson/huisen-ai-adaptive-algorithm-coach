@@ -1,0 +1,98 @@
+services:
+  db:
+    image: postgres:16.2
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - judge0-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7.2.4
+    env_file: .env
+    restart: unless-stopped
+    command: ["sh", "-c", "redis-server --appendonly no --requirepass \"$$REDIS_PASSWORD\""]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$$REDIS_PASSWORD\" ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  judge0-server:
+    image: judge0/judge0:1.13.1
+    restart: unless-stopped
+    privileged: true
+    volumes:
+      - ./.env:/judge0.conf:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  judge0-workers:
+    image: judge0/judge0:1.13.1
+    restart: unless-stopped
+    privileged: true
+    command: ["./scripts/workers"]
+    volumes:
+      - ./.env:/judge0.conf:ro
+    depends_on:
+      judge0-server:
+        condition: service_started
+
+  judge0-language-tuning:
+    image: postgres:16.2
+    env_file: .env
+    restart: "no"
+    volumes:
+      - ./judge0-language-tuning.sql:/tuning.sql:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      judge0-server:
+        condition: service_started
+    command:
+      - sh
+      - -c
+      - >-
+        export PGPASSWORD="$$POSTGRES_PASSWORD";
+        until psql -h "$$POSTGRES_HOST" -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+        -tAc 'SELECT 1 FROM languages WHERE id = 62' | grep -q 1; do sleep 2; done;
+        psql -h "$$POSTGRES_HOST" -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1 -f /tuning.sql
+
+  gateway:
+    build:
+      context: ../..
+      dockerfile: services/runner/gateway/Dockerfile
+    env_file: .env
+    environment:
+      # Host environment overrides let local experiments use a server-only key
+      # without writing it into the project .env file.
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      # Enable transactional Mentor persistence in the existing PostgreSQL
+      # instance. Database/user/password come from the server-only env_file.
+      MENTOR_PG_HOST: db
+      # Keep this distinct from Judge0 SECRET_KEY_BASE. When omitted the
+      # gateway reports permissive-local identity mode explicitly.
+      MENTOR_AUTH_SECRET: ${MENTOR_AUTH_SECRET:-}
+      # The shared Judge0 config uses PORT=2358; the gateway listens separately.
+      PORT: ${GATEWAY_PORT:-8787}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - gateway-learning-data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+      judge0-language-tuning:
+        condition: service_completed_successfully
+
+volumes:
+  judge0-db:
+  gateway-learning-data:
