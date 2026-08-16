@@ -10,6 +10,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks: [platform, judge-private]
 
   redis:
     image: redis:7.2.4
@@ -21,13 +22,18 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+    networks: [platform, judge-private]
 
   judge0-server:
     image: judge0/judge0:1.13.1
     restart: unless-stopped
     privileged: true
-    volumes:
-      - ./.env:/judge0.conf:ro
+    configs:
+      - source: judge0-config
+        target: /judge0.conf
+    networks: [judge-private]
+    mem_limit: 2g
+    pids_limit: 512
     depends_on:
       db:
         condition: service_healthy
@@ -39,8 +45,12 @@ services:
     restart: unless-stopped
     privileged: true
     command: ["./scripts/workers"]
-    volumes:
-      - ./.env:/judge0.conf:ro
+    configs:
+      - source: judge0-config
+        target: /judge0.conf
+    networks: [judge-private]
+    mem_limit: 4g
+    pids_limit: 1024
     depends_on:
       judge0-server:
         condition: service_started
@@ -64,6 +74,7 @@ services:
         until psql -h "$$POSTGRES_HOST" -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
         -tAc 'SELECT 1 FROM languages WHERE id = 62' | grep -q 1; do sleep 2; done;
         psql -h "$$POSTGRES_HOST" -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -v ON_ERROR_STOP=1 -f /tuning.sql
+    networks: [platform]
 
   gateway:
     build:
@@ -77,14 +88,23 @@ services:
       # Enable transactional Mentor persistence in the existing PostgreSQL
       # instance. Database/user/password come from the server-only env_file.
       MENTOR_PG_HOST: db
+      IDENTITY_PG_HOST: db
+      ACCOUNT_TOKEN_PEPPER: ${ACCOUNT_TOKEN_PEPPER:-local-account-token-pepper-change-before-production}
       # Keep this distinct from Judge0 SECRET_KEY_BASE. When omitted the
       # gateway reports permissive-local identity mode explicitly.
       MENTOR_AUTH_SECRET: ${MENTOR_AUTH_SECRET:-}
       # The shared Judge0 config uses PORT=2358; the gateway listens separately.
       PORT: ${GATEWAY_PORT:-8787}
     restart: unless-stopped
+    command: ["sh", "-c", "npm run migrate && npm run start"]
     ports:
       - "127.0.0.1:8787:8787"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8787/healthz"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 5s
     volumes:
       - gateway-learning-data:/data
     depends_on:
@@ -92,6 +112,45 @@ services:
         condition: service_healthy
       judge0-language-tuning:
         condition: service_completed_successfully
+    networks: [platform, judge-private]
+
+configs:
+  judge0-config:
+    content: |
+      POSTGRES_HOST=db
+      POSTGRES_PORT=5432
+      POSTGRES_DB=${POSTGRES_DB}
+      POSTGRES_USER=${POSTGRES_USER}
+      POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      REDIS_HOST=redis
+      REDIS_PORT=6379
+      REDIS_PASSWORD=${REDIS_PASSWORD}
+      JUDGE0_TELEMETRY_ENABLE=false
+      ENABLE_WAIT_RESULT=true
+      ENABLE_COMPILER_OPTIONS=false
+      ENABLE_COMMAND_LINE_ARGUMENTS=false
+      ENABLE_CALLBACKS=false
+      ENABLE_ADDITIONAL_FILES=false
+      ENABLE_PER_PROCESS_AND_THREAD_TIME_LIMIT=true
+      ENABLE_PER_PROCESS_AND_THREAD_MEMORY_LIMIT=true
+      CPU_TIME_LIMIT=5
+      MAX_CPU_TIME_LIMIT=5
+      WALL_TIME_LIMIT=10
+      MAX_WALL_TIME_LIMIT=10
+      MEMORY_LIMIT=2048000
+      MAX_MEMORY_LIMIT=2048000
+      MAX_FILE_SIZE=1024
+      MAX_MAX_FILE_SIZE=1024
+      ALLOW_ENABLE_NETWORK=false
+      ENABLE_NETWORK=false
+      COUNT=2
+      MAX_QUEUE_SIZE=20
+      RAILS_ENV=production
+
+networks:
+  platform:
+  judge-private:
+    internal: true
 
 volumes:
   judge0-db:

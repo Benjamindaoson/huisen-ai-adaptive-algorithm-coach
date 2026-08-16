@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mentor-os.local/schemas/judge-pack-v1.json",
+  "title": "Trusted Judge Pack Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "id", "problemId", "problemContentHash", "manifestHash", "trustLevel", "hiddenCases", "oracles", "languageSmoke", "mutation", "review"],
+  "properties": {
+    "version": { "const": 1 },
+    "id": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "problemId": { "type": "string", "pattern": "^[A-Za-z0-9._:-]+$" },
+    "problemContentHash": { "$ref": "#/$defs/sha256" },
+    "manifestHash": { "$ref": "#/$defs/sha256" },
+    "trustLevel": { "enum": ["candidate", "auto-validated", "gold"] },
+    "hiddenCases": { "type": "array", "items": { "type": "object", "required": ["id", "category", "inputHash", "expectedHash"], "properties": { "id": { "type": "string" }, "category": { "type": "string" }, "inputHash": { "$ref": "#/$defs/sha256" }, "expectedHash": { "$ref": "#/$defs/sha256" } } } },
+    "oracles": { "type": "array", "items": { "type": "object" } },
+    "languageSmoke": { "type": "object" },
+    "mutation": { "type": "object" },
+    "review": { "type": ["object", "null"] }
+  },
+  "$defs": { "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+}

@@ -1,0 +1,320 @@
+{
+  "version": 2,
+  "benchmark": "mentor-diagnosis-seed-v2",
+  "fixtureCount": 4,
+  "metrics": {
+    "lineLocalizationAccuracy": 1,
+    "misconceptionAccuracy": 1,
+    "evidenceSufficiency": 1,
+    "minimalHintEffectiveness": 1,
+    "answerLeakageRate": 0,
+    "falseConclusionRate": 0
+  },
+  "thresholds": {
+    "lineLocalizationAccuracy": 0.8,
+    "misconceptionAccuracy": 0.7,
+    "evidenceSufficiency": 0.8,
+    "minimalHintEffectiveness": 0.4,
+    "answerLeakageRate": 0,
+    "falseConclusionRate": 0.02
+  },
+  "thresholdStatus": {
+    "lineLocalizationAccuracy": true,
+    "misconceptionAccuracy": true,
+    "evidenceSufficiency": true,
+    "minimalHintEffectiveness": true,
+    "answerLeakageRate": true,
+    "falseConclusionRate": true
+  },
+  "eligibleRealCaseCount": 0,
+  "teacherAdjudicatedCaseCount": 4,
+  "missingPredictionCaseIds": [],
+  "segments": {
+    "language": {
+      "cpp": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "java": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "javascript": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "python": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      }
+    },
+    "errorFamily": {
+      "boundary": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "edge-case": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "input": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "numeric": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      }
+    },
+    "learnerBand": {
+      "advanced": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "beginner": {
+        "fixtureCount": 2,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "intermediate": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      }
+    },
+    "verdict": {
+      "compile-error": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "runtime-error": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "timeout": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      },
+      "wrong-answer": {
+        "fixtureCount": 1,
+        "metrics": {
+          "lineLocalizationAccuracy": 1,
+          "misconceptionAccuracy": 1,
+          "evidenceSufficiency": 1,
+          "minimalHintEffectiveness": 1,
+          "answerLeakageRate": 0,
+          "falseConclusionRate": 0
+        },
+        "eligibleRealCaseCount": 0
+      }
+    }
+  },
+  "releaseGate": {
+    "minimumEligibleRealCases": 100,
+    "passed": false,
+    "failures": [
+      "eligible-real-cases: 0/100",
+      "coverage:languages:javascript",
+      "coverage:languages:python",
+      "coverage:languages:java",
+      "coverage:languages:cpp",
+      "coverage:learnerBands:beginner",
+      "coverage:learnerBands:intermediate",
+      "coverage:learnerBands:advanced",
+      "coverage:errorFamilies:boundary",
+      "coverage:errorFamilies:input",
+      "coverage:errorFamilies:numeric",
+      "coverage:errorFamilies:edge-case",
+      "coverage:verdicts:wrong-answer",
+      "coverage:verdicts:runtime-error",
+      "coverage:verdicts:compile-error",
+      "coverage:verdicts:timeout"
+    ]
+  },
+  "rows": [
+    {
+      "caseId": "seed-js-boundary-01",
+      "language": "javascript",
+      "learnerBand": "beginner",
+      "errorFamily": "boundary",
+      "verdict": "wrong-answer",
+      "licenseEligible": true,
+      "eligibleReal": false,
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "evidenceSufficient": true,
+      "minimalHintEffective": true,
+      "answerLeakage": false,
+      "falseConclusion": false
+    },
+    {
+      "caseId": "seed-py-input-01",
+      "language": "python",
+      "learnerBand": "intermediate",
+      "errorFamily": "input",
+      "verdict": "runtime-error",
+      "licenseEligible": true,
+      "eligibleReal": false,
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "evidenceSufficient": true,
+      "minimalHintEffective": true,
+      "answerLeakage": false,
+      "falseConclusion": false
+    },
+    {
+      "caseId": "seed-java-overflow-01",
+      "language": "java",
+      "learnerBand": "advanced",
+      "errorFamily": "numeric",
+      "verdict": "compile-error",
+      "licenseEligible": true,
+      "eligibleReal": false,
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "evidenceSufficient": true,
+      "minimalHintEffective": true,
+      "answerLeakage": false,
+      "falseConclusion": false
+    },
+    {
+      "caseId": "seed-cpp-empty-01",
+      "language": "cpp",
+      "learnerBand": "beginner",
+      "errorFamily": "edge-case",
+      "verdict": "timeout",
+      "licenseEligible": true,
+      "eligibleReal": false,
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "evidenceSufficient": true,
+      "minimalHintEffective": true,
+      "answerLeakage": false,
+      "falseConclusion": false
+    }
+  ],
+  "publicDataset": {
+    "imported": 200,
+    "pendingAdjudication": 200,
+    "eligible": 0
+  },
+  "adjudication": {
+    "imported": 0,
+    "predictionCount": 0
+  },
+  "generatedFrom": [
+    "C:\\Users\\Admin（无密码）\\Music\\huawei-test\\quality\\mentor-diagnosis-v2.json",
+    "C:\\Users\\Admin（无密码）\\Music\\huawei-test\\quality\\provenance\\mentor-cases.json"
+  ],
+  "caveat": "Synthetic regression fixtures are never counted as real evidence. This report stays release-gate red until 100 eligible, teacher-adjudicated public or first-party cases cover every required segment."
+}

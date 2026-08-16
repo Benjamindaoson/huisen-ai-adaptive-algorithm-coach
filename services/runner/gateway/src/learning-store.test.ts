@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { createLearningStore } from './learning-store.js';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -42,5 +42,67 @@ describe('learning store', () => {
     expect((await store.appendEvent(events[0])).created).toBe(false);
     await expect(store.appendEvent({ ...events[0], problemId: 'od-tampered' })).rejects.toThrow('Invalid learning event replay');
     expect(await store.listEvents('learner-a')).toHaveLength(500);
+  });
+
+  it('retains an old activation milestone while bounding a long memory history', async () => {
+    const store = createLearningStore();
+    const mission = {
+      id: 'mission-old', learnerId: 'learner-a', kind: 'first-minute-mission-seen' as const,
+      data: { lessonId: 'starter-array-traversal' }, createdAt: '2026-08-01T00:00:00.000Z',
+    };
+    const recent = Array.from({ length: 520 }, (_, index) => ({
+      id: `recent-${index}`, learnerId: 'learner-a', kind: 'hint-requested' as const, problemId: 'od-a', attemptId: `attempt-${index}`,
+      data: { hintLevel: 1 }, createdAt: new Date(Date.parse('2026-08-02T00:00:00Z') + index * 1_000).toISOString(),
+    }));
+
+    await store.appendEvent(mission);
+    await store.appendEvents(recent);
+    const retained = await store.listEvents('learner-a');
+
+    expect(retained).toHaveLength(500);
+    expect(retained.some((event) => event.id === mission.id)).toBe(true);
+  });
+
+  it('recovers an evicted milestone from durable file replay receipts without inventing evidence', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'od-learning-store-recovery-'));
+    try {
+      const filePath = join(directory, 'learning.json');
+      const mission = {
+        id: 'mission-old', learnerId: 'learner-a', kind: 'first-minute-mission-seen' as const,
+        data: { lessonId: 'starter-array-traversal' }, createdAt: '2026-08-01T00:00:00.000Z',
+      };
+      const recent = Array.from({ length: 520 }, (_, index) => ({
+        id: `recent-${index}`, learnerId: 'learner-a', kind: 'hint-requested' as const, problemId: 'od-a', attemptId: `attempt-${index}`,
+        data: { hintLevel: 1 }, createdAt: new Date(Date.parse('2026-08-02T00:00:00Z') + index * 1_000).toISOString(),
+      }));
+      const allEvents = [mission, ...recent];
+      await writeFile(filePath, JSON.stringify({
+        version: 1,
+        learners: {
+          'learner-a': {
+            events: recent.slice(-500),
+            eventIds: allEvents.map((event) => event.id),
+            eventReceipts: Object.fromEntries(allEvents.map((event) => [event.id, event])),
+          },
+        },
+      }));
+
+      const recovered = await createLearningStore({ filePath }).listEvents('learner-a');
+      expect(recovered).toHaveLength(500);
+      expect(recovered.some((event) => event.id === mission.id)).toBe(true);
+
+      await writeFile(filePath, JSON.stringify({
+        version: 1,
+        learners: {
+          'learner-a': {
+            events: recent.slice(-500),
+            eventIds: recent.map((event) => event.id),
+            eventReceipts: Object.fromEntries(recent.map((event) => [event.id, event])),
+          },
+        },
+      }));
+      const honestlyAbsent = await createLearningStore({ filePath }).listEvents('learner-a');
+      expect(honestlyAbsent.some((event) => event.kind === 'first-minute-mission-seen')).toBe(false);
+    } finally { await rm(directory, { recursive: true, force: true }); }
   });
 });

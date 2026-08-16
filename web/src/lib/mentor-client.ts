@@ -21,6 +21,7 @@ export type MentorTimelineEvent = {
   status?: 'unverified' | 'supported' | 'rejected' | 'complete';
   tool?: string;
 };
+export type MentorTransferTask = { problemId: string; title: string; skillIds: string[]; evidenceRefs: string[] };
 export type MentorSession = {
   version: 1;
   id: string;
@@ -32,6 +33,14 @@ export type MentorSession = {
   judgeOutcome: string;
   nextAction: string;
   timeline: MentorTimelineEvent[];
+  pendingPrompt?: { question: string; expectedConcept: string; targetSkillId?: string; evidenceRefs: string[]; misconceptionId?: string };
+  transferTask?: MentorTransferTask;
+  twin?: {
+    version: 1;
+    learnerId: string;
+    updatedAt: string;
+    lastChanges: Array<{ skillId: string; prior: number; posterior: number; evidenceRef: string; kind: string }>;
+  };
 };
 export type MentorTurnResponse = {
   version: 1;
@@ -50,7 +59,7 @@ export function buildMentorRequest(learnerId: string, problem: ProblemRecord, at
   const description = problem.sections.description ?? '';
   const input = problem.sections.input ?? '';
   const output = problem.sections.output ?? '';
-  const skillIds = inferProblemSkills({ title: problem.title, searchText: `${description}\n${input}\n${output}`, skills: problem.skills });
+  const skillIds = inferProblemSkills({ title: problem.title, searchText: `${description}\n${input}\n${output}`, skills: problem.skills, classification: problem.classification });
   return {
     version: 1, learnerId,
     problem: {

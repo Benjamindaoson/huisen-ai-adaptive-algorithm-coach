@@ -1,6 +1,9 @@
 import { appendLearningEvent, emptyLearnerMemory, parseLearnerMemory, type LearnerMemory } from './learner-memory';
 import { parsePracticeState, recordAttempt, type PracticeState } from './practice';
 import { importProgress, parseProgress, type ProgressState } from './progress';
+import { emptyPedagogicalMemory, parsePedagogicalMemory, type PedagogicalMemory } from './pedagogical-memory';
+import { parseQualityReviewState, type QualityReviewState } from './quality-review';
+import { emptyMentorOSState, parseMentorOSState, type MentorOSBackupState } from './mentor-os-state';
 
 type LearningBackupV2 = {
   version: 2;
@@ -17,19 +20,36 @@ type LearningBackupV3 = {
   memory: LearnerMemory;
 };
 
+type LearningBackupV4 = Omit<LearningBackupV3, 'version'> & {
+  version: 4;
+  pedagogicalMemory: PedagogicalMemory;
+  qualityReviews: QualityReviewState;
+};
+
+type LearningBackupV5 = Omit<LearningBackupV4, 'version'> & {
+  version: 5;
+  mentorOS: MentorOSBackupState;
+};
+
 function isTimestamp(value: unknown): value is string {
   return typeof value === 'string' && !Number.isNaN(Date.parse(value));
 }
 
-function parseBackup(value: unknown): LearningBackupV2 | LearningBackupV3 {
+function parseBackup(value: unknown): LearningBackupV2 | LearningBackupV3 | LearningBackupV4 | LearningBackupV5 {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid backup format');
-  const candidate = value as { version?: unknown; exportedAt?: unknown; progress?: unknown; practice?: unknown; memory?: unknown };
-  if (candidate.version !== 2 && candidate.version !== 3) throw new Error('Unsupported backup version');
+  const candidate = value as { version?: unknown; exportedAt?: unknown; progress?: unknown; practice?: unknown; memory?: unknown; pedagogicalMemory?: unknown; qualityReviews?: unknown; mentorOS?: unknown };
+  if (candidate.version !== 2 && candidate.version !== 3 && candidate.version !== 4 && candidate.version !== 5) throw new Error('Unsupported backup version');
   if (!isTimestamp(candidate.exportedAt)) throw new Error('Invalid backup timestamp');
 
   // Parse both sections before any caller-visible state is changed.
   const progress = parseProgress(candidate.progress);
   const practice = parsePracticeState(candidate.practice);
+  if (candidate.version === 5) {
+    return { version: 5, exportedAt: candidate.exportedAt, progress, practice, memory: parseLearnerMemory(candidate.memory), pedagogicalMemory: parsePedagogicalMemory(candidate.pedagogicalMemory), qualityReviews: parseQualityReviewState(candidate.qualityReviews), mentorOS: parseMentorOSState(candidate.mentorOS) };
+  }
+  if (candidate.version === 4) {
+    return { version: 4, exportedAt: candidate.exportedAt, progress, practice, memory: parseLearnerMemory(candidate.memory), pedagogicalMemory: parsePedagogicalMemory(candidate.pedagogicalMemory), qualityReviews: parseQualityReviewState(candidate.qualityReviews) };
+  }
   if (candidate.version === 3) {
     return { version: 3, exportedAt: candidate.exportedAt, progress, practice, memory: parseLearnerMemory(candidate.memory) };
   }
@@ -65,8 +85,11 @@ export function exportLearningBackup(
   practice: PracticeState,
   memory: LearnerMemory = emptyLearnerMemory(),
   now = new Date(),
+  pedagogicalMemory: PedagogicalMemory = emptyPedagogicalMemory(),
+  qualityReviews: QualityReviewState = { version: 1, teacherReviews: [] },
+  mentorOS: MentorOSBackupState = emptyMentorOSState(),
 ): string {
-  const backup: LearningBackupV3 = { version: 3, exportedAt: now.toISOString(), progress, practice, memory };
+  const backup: LearningBackupV5 = { version: 5, exportedAt: now.toISOString(), progress, practice, memory, pedagogicalMemory, qualityReviews, mentorOS };
   return JSON.stringify(backup, null, 2);
 }
 
@@ -76,18 +99,29 @@ export function importLearningBackup(
   currentProgress: ProgressState,
   currentPractice: PracticeState,
   currentMemory: LearnerMemory = emptyLearnerMemory(),
-): { progress: ProgressState; practice: PracticeState; memory: LearnerMemory } {
+  currentPedagogicalMemory: PedagogicalMemory = emptyPedagogicalMemory(),
+  currentQualityReviews: QualityReviewState = { version: 1, teacherReviews: [] },
+  currentMentorOS: MentorOSBackupState = emptyMentorOSState(),
+): { progress: ProgressState; practice: PracticeState; memory: LearnerMemory; pedagogicalMemory: PedagogicalMemory; qualityReviews: QualityReviewState; mentorOS: MentorOSBackupState } {
   const raw: unknown = JSON.parse(json);
   if (raw && typeof raw === 'object' && !Array.isArray(raw) && (raw as { version?: unknown }).version === 1) {
-    return { progress: importProgress(json, mode, currentProgress), practice: currentPractice, memory: currentMemory };
+    return { progress: importProgress(json, mode, currentProgress), practice: currentPractice, memory: currentMemory, pedagogicalMemory: currentPedagogicalMemory, qualityReviews: currentQualityReviews, mentorOS: currentMentorOS };
   }
 
   const incoming = parseBackup(raw);
-  const incomingMemory = incoming.version === 3 ? incoming.memory : currentMemory;
-  if (mode === 'replace') return { progress: incoming.progress, practice: incoming.practice, memory: incomingMemory };
+  const incomingMemory = incoming.version === 3 || incoming.version === 4 || incoming.version === 5 ? incoming.memory : currentMemory;
+  const incomingPedagogical = incoming.version === 4 || incoming.version === 5 ? incoming.pedagogicalMemory : currentPedagogicalMemory;
+  const incomingReviews = incoming.version === 4 || incoming.version === 5 ? incoming.qualityReviews : currentQualityReviews;
+  const incomingMentorOS = incoming.version === 5 ? incoming.mentorOS : currentMentorOS;
+  if (mode === 'replace') return { progress: incoming.progress, practice: incoming.practice, memory: incomingMemory, pedagogicalMemory: incomingPedagogical, qualityReviews: incomingReviews, mentorOS: incomingMentorOS };
+  const eventMap = new Map([...currentPedagogicalMemory.events, ...incomingPedagogical.events].map((event) => [event.id, event]));
+  const reviewMap = new Map([...currentQualityReviews.teacherReviews, ...incomingReviews.teacherReviews].map((review) => [`${review.comparisonId}:${review.reviewerId}:${review.reviewedAt}`, review]));
   return {
     progress: importProgress(JSON.stringify(incoming.progress), 'merge', currentProgress),
     practice: mergePractice(currentPractice, incoming.practice),
     memory: mergeMemory(currentMemory, incomingMemory),
+    pedagogicalMemory: { version: 1, events: [...eventMap.values()].sort((a, b) => a.createdAt.localeCompare(b.createdAt)).slice(-500) },
+    qualityReviews: { version: 1, teacherReviews: [...reviewMap.values()] },
+    mentorOS: incoming.version === 5 ? incomingMentorOS : currentMentorOS,
   };
 }

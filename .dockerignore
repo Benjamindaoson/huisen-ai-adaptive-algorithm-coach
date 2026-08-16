@@ -11,9 +11,14 @@ services/runner/gateway/*
 !services/runner/gateway/Dockerfile
 !services/runner/gateway/src/
 !services/runner/gateway/src/**
+!services/runner/gateway/migrations/
+!services/runner/gateway/migrations/**
 !content/
 content/*
 !content/mentor-index.json
 !content/verified-public-cases.json
 !content/problems/
 !content/problems/**
+!contracts/
+contracts/*
+!contracts/learning-event-contract.ts

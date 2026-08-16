@@ -17,12 +17,12 @@ export function LearnerGoalCard({ profile, onSave }: Props) {
   function changeExamDate(value: string) { setDraft((current) => ({ ...current, examDate: value || null })); }
 
   if (!editing) return <section className="learner-goal-card" aria-labelledby="learner-goal-title">
-    <div><span className="section-kicker">LEARNING GOAL</span><h2 id="learner-goal-title">{targetLabels[profile.target]}</h2><p>{profile.examDate ? `目标日期 ${profile.examDate}` : '暂未设置目标日期'} · 每天 {profile.dailyMinutes} 分钟 · {profile.preferredLanguage}</p></div>
+    <div><span className="section-kicker">学习目标</span><h2 id="learner-goal-title">{targetLabels[profile.target]}</h2><p>{profile.examDate ? `目标日期 ${profile.examDate}` : '暂未设置目标日期'} · 每天 {profile.dailyMinutes} 分钟 · {profile.preferredLanguage}</p></div>
     <button type="button" className="ghost-action" onClick={() => setEditing(true)}>调整目标</button>
   </section>;
 
   return <form className="learner-goal-form" onSubmit={submit} aria-label="编辑学习目标">
-    <div className="goal-form-heading"><div><span className="section-kicker">LEARNING GOAL</span><h2>告诉总教练你要去哪里</h2></div><button type="button" className="ghost-action" onClick={() => setEditing(false)}>取消</button></div>
+    <div className="goal-form-heading"><div><span className="section-kicker">学习目标</span><h2>告诉总教练你要去哪里</h2></div><button type="button" className="ghost-action" onClick={() => setEditing(false)}>取消</button></div>
     <div className="goal-fields">
       <label>目标场景<select value={draft.target} onChange={(event) => setDraft({ ...draft, target: event.target.value as LearnerProfile['target'] })}><option value="od-exam">通过算法初试</option><option value="interview">准备技术面试</option><option value="foundation">系统补基础</option></select></label>
       <label>目标日期<input type="date" value={draft.examDate ?? ''} onInput={(event) => changeExamDate(event.currentTarget.value)} onChange={(event) => changeExamDate(event.currentTarget.value)} /></label>

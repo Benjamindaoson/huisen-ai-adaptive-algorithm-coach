@@ -66,7 +66,7 @@ Gateway-only environment variables:
 ```dotenv
 DEEPSEEK_API_KEY=server-side-secret
 DEEPSEEK_API_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-v4-flash
+DEEPSEEK_MODEL=deepseek-chat
 MENTOR_DATA_FILE=/data/mentor.json
 MENTOR_PG_HOST=db
 MENTOR_PG_PORT=5432

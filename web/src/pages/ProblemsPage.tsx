@@ -18,7 +18,7 @@ export function ProblemsPage({ catalog, progress, onOpen }: Props) {
   const collections = useMemo(() => values(catalog, (item) => [item.collection]), [catalog]);
   const languages = useMemo(() => values(catalog, (item) => item.languages), [catalog]);
   return <div className="module-page problems-page">
-    <header className="module-header"><div><span className="section-kicker">LIBRARY</span><h1>题库</h1><p>搜索题名、算法或题干内容，找到下一道值得练习的题。</p></div><strong className="header-count">{catalog.length}<small> 道题</small></strong></header>
+    <header className="module-header"><div><span className="section-kicker">ALGORITHM LAB</span><h1>题库练习</h1><p>754 道题不是用来刷完的。按技能、错因和目标，找到此刻最值得练习的一题。</p></div><strong className="header-count">{catalog.length}<small> 道真实题目</small></strong></header>
     <section className="library-toolbar" aria-label="搜索全部题库">
       <label className="library-search"><span aria-hidden="true">⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索题名、关键词或算法…" /></label>
       <div className="library-filters">

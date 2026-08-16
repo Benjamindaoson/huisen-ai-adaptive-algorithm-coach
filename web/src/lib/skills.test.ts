@@ -32,4 +32,22 @@ describe('inferProblemSkills', () => {
       skills: ['graph', 'search'],
     })).toEqual(['graph', 'search']);
   });
+
+  it('replaces a candidate greedy label with stronger custom-ranking evidence', () => {
+    expect(inferProblemSkills({
+      title: '比赛评分',
+      searchText: '计算得分最多的3位选手。如果总分相同，按10分数量、9分数量逐级比较排名。',
+      skills: ['greedy'],
+      classification: { source: 'candidate', confidence: 0.9 },
+    })).toEqual(['sorting']);
+  });
+
+  it('keeps verified persisted skills authoritative over keyword inference', () => {
+    expect(inferProblemSkills({
+      title: '特殊规则',
+      searchText: '排名、二分、数组',
+      skills: ['greedy'],
+      classification: { source: 'verified', confidence: 1 },
+    })).toEqual(['greedy']);
+  });
 });

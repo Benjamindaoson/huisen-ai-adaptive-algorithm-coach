@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Mentor public-submission provenance manifest",
+  "type": "object",
+  "required": ["version", "cases"],
+  "properties": {
+    "version": { "const": 1 },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "language", "attempt", "execution", "provenance", "adjudication"],
+        "properties": {
+          "provenance": { "type": "object", "required": ["origin", "sourceUrl", "license"] },
+          "adjudication": { "type": "object", "required": ["status"] }
+        }
+      }
+    }
+  },
+  "description": "Imported CodeNet-style records remain pending and intentionally omit expected teacher gold labels."
+}

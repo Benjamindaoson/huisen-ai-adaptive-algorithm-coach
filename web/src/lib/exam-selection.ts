@@ -1,8 +1,8 @@
 import type { CatalogProblem } from './catalog';
 import { inferProblemSkills } from './skills';
 
-export function selectExamProblems(catalog: CatalogProblem[], count: number): CatalogProblem[] {
-  const remaining = catalog.filter((problem) => problem.completeness === 'complete' && problem.languages.length > 0);
+export function selectExamProblems(catalog: CatalogProblem[], count: number, options: { eligibleIds?: ReadonlySet<string> } = {}): CatalogProblem[] {
+  const remaining = catalog.filter((problem) => problem.completeness === 'complete' && problem.languages.length > 0 && (!options.eligibleIds || options.eligibleIds.has(problem.id)));
   const selected: CatalogProblem[] = [];
   const coveredSkills = new Set<string>();
 

@@ -25,6 +25,13 @@
   --p-violet-50: #f4f0ff;
   --p-violet-100: #e8defe;
   --p-violet-500: #7656d8;
+  --p-midnight-950: #07101f;
+  --p-midnight-900: #0b1426;
+  --p-midnight-800: #121f35;
+  --p-cyan-400: #6ee7f2;
+  --p-mint-50: #ecfff8;
+  --p-mint-400: #4be1b0;
+  --p-mint-500: #25c995;
 
   /* Semantic */
   --surface-canvas: var(--p-gray-50);
@@ -47,19 +54,33 @@
   --status-warning-soft: var(--p-amber-50);
   --identity-ai: var(--p-violet-500);
   --identity-ai-soft: var(--p-violet-50);
+  --identity-rail: var(--p-midnight-950);
+  --identity-evidence: var(--p-mint-500);
+  --identity-evidence-soft: var(--p-mint-50);
   --focus-ring: color-mix(in srgb, var(--action-primary) 28%, transparent);
   --shadow-sm: 0 1px 2px rgb(23 32 46 / 5%);
-  --shadow-md: 0 10px 30px rgb(23 32 46 / 8%);
-  --shadow-lg: 0 24px 60px rgb(23 32 46 / 12%);
+  --shadow-md: 0 16px 40px rgb(23 32 46 / 9%);
+  --shadow-lg: 0 28px 80px rgb(7 16 31 / 15%);
+  --shadow-glow: 0 18px 55px rgb(59 99 243 / 18%);
+  --font-size-meta: 0.75rem;
+  --font-size-body: 0.9375rem;
+  --font-size-action: 0.875rem;
+  --font-size-learner-title: 1.125rem;
+  --font-size-learner-copy: 0.9375rem;
+  --space-control: 0.75rem;
 
   /* Component */
-  --sidebar-width: 232px;
-  --sidebar-bg: var(--surface-base);
+  --sidebar-width: 252px;
+  --sidebar-bg: var(--identity-rail);
+  --contextbar-height: 68px;
+  --mentor-width: 334px;
   --nav-active-bg: var(--action-primary-soft);
   --nav-active-text: var(--action-primary-hover);
   --card-bg: var(--surface-base);
   --card-border: var(--border-default);
-  --card-radius: 14px;
-  --button-radius: 9px;
+  --card-radius: 18px;
+  --button-radius: 11px;
   --workspace-gap: 8px;
+  --action-label-size: var(--font-size-action);
+  --learning-copy-size: var(--font-size-body);
 }

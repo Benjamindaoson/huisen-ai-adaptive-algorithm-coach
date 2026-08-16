@@ -26,6 +26,7 @@ export const MENTOR_TOOL_DEFINITIONS: MentorToolDefinition[] = [
   tool('ask_learner', 'Ask one focused prediction question before revealing an intervention.', {
     question: stringProperty('One focused learner prediction question'),
     expectedConcept: stringProperty('Short concept used to evaluate the response'),
+    targetSkillId: stringProperty('One primary skill id from the current problem that this question tests'),
     evidenceRefs: { type: 'array', items: { type: 'string' } },
   }),
   tool('finish', 'Stop the current Mentor turn with an explicit learner action.', {
@@ -69,7 +70,7 @@ export function validateMentorToolCall(name: string, value: Record<string, unkno
     if (!['failure', 'assisted-pass', 'independent-pass', 'transfer-pass', 'prediction-correct'].includes(kind)) throw new Error('Invalid twin observation kind');
     return { name, arguments: { kind, skillIds: stringArray(value.skillIds, 'skill ids', 8), misconceptionId: text(value.misconceptionId, 'misconception id', 120, true), evidenceRef: text(value.evidenceRef, 'evidence ref', 300) } };
   }
-  if (name === 'ask_learner') { only('question', 'expectedConcept', 'evidenceRefs'); return { name, arguments: { question: text(value.question, 'learner question', 500), expectedConcept: text(value.expectedConcept, 'expected concept', 120), evidenceRefs: stringArray(value.evidenceRefs, 'question evidence', 8) } }; }
+  if (name === 'ask_learner') { only('question', 'expectedConcept', 'targetSkillId', 'evidenceRefs'); return { name, arguments: { question: text(value.question, 'learner question', 500), expectedConcept: text(value.expectedConcept, 'expected concept', 120), targetSkillId: text(value.targetSkillId, 'target skill', 120), evidenceRefs: stringArray(value.evidenceRefs, 'question evidence', 8) } }; }
   if (name === 'finish') {
     only('summary', 'nextAction', 'status'); const status = text(value.status, 'finish status', 40);
     if (!['awaiting-edit', 'verifying', 'transfer', 'complete'].includes(status)) throw new Error('Invalid finish status');

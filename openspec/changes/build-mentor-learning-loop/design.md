@@ -30,7 +30,7 @@ The new design keeps the judge as the verdict authority and makes the Mentor a s
 
 ### Native DeepSeek tool calls
 
-The model adapter uses the OpenAI-compatible `/chat/completions` endpoint with function tools and passes assistant tool calls plus tool results back on every step. Each function has a strict local JSON validator even when provider strict mode is unavailable. The model can choose tool arguments, repeat tools when evidence changes, call `ask_learner`, or call `finish`; it cannot emit a judge verdict. The default model is `deepseek-v4-flash`, configurable via `DEEPSEEK_MODEL`, and the key is read only from `DEEPSEEK_API_KEY` or the existing server-side provider variable.
+The model adapter uses the OpenAI-compatible `/chat/completions` endpoint with function tools and passes assistant tool calls plus tool results back on every step. Each function has a strict local JSON validator even when provider strict mode is unavailable. The model can choose tool arguments, repeat tools when evidence changes, call `ask_learner`, or call `finish`; it cannot emit a judge verdict. The default orchestration route is the non-reasoning `deepseek-chat` alias, configurable via `DEEPSEEK_MODEL`, because tool selection must complete inside the learner request budget; the provider may resolve that alias to a newer backend model. The key is read only from `DEEPSEEK_API_KEY` or the existing server-side provider variable.
 
 ### Tree-sitter-backed code intelligence with safe fallback
 

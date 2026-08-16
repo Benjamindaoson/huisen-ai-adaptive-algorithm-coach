@@ -1,0 +1,77 @@
+name: Verify M0-M1 Backend
+
+on:
+  pull_request:
+  push:
+    branches: [main, "codex/**"]
+  workflow_dispatch:
+    inputs:
+      run_release_gate:
+        description: Run the non-bypassable Mentor production gate
+        type: boolean
+        default: false
+
+jobs:
+  technical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm --prefix web ci
+      - run: npm --prefix services/runner/gateway ci
+      - run: npm run test
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build:web
+      - run: npm run baseline:production
+      - run: npm run stack:config
+      - run: npm --prefix services/runner/gateway test -- src/migrations.test.ts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: production-baseline
+          path: docs/quality/production-baseline.json
+
+  mentor-production-gate:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_release_gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run quality:mentor
+
+  production-like-stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Create isolated CI configuration
+        run: |
+          cp services/runner/.env.example services/runner/.env
+          sed -i 's/replace-with-a-long-unique-postgres-password/ci-postgres-password-2026-strong/' services/runner/.env
+          sed -i 's/replace-with-a-long-unique-redis-password/ci-redis-password-2026-strong/' services/runner/.env
+          sed -i 's/replace-with-a-distinct-random-object-store-password/ci-object-store-password-2026-strong/' services/runner/.env
+          sed -i 's/replace-with-a-distinct-random-account-token-pepper/ci-account-token-pepper-2026-at-least-32/' services/runner/.env
+      - run: npm run stack:up
+      - run: npm run stack:smoke
+      - run: npm run stack:containment
+      - run: npm run stack:submission-smoke
+      - name: Container logs on failure
+        if: failure()
+        run: docker compose --env-file services/runner/.env -f services/runner/compose.production-like.yml logs --no-color --tail=200
+      - name: Stop stack
+        if: always()
+        run: npm run stack:down

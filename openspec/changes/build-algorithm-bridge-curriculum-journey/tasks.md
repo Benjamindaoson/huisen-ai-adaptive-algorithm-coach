@@ -9,8 +9,8 @@
 ## 2. Trusted curriculum graph
 
 - [ ] 2.1 Add failing graph-validation tests for cycles, duplicates, unknown prerequisites/skills, invalid review intervals, authority, stale hashes, and unavailable content.
-- [ ] 2.2 Implement one versioned graph that adapts the existing 12 foundation and 3 starter lessons without changing their old deep links or progress meaning.
-- [ ] 2.3 Add curriculum segment, node availability, objective, misconception, transfer, authority, content hash, and version metadata to the trusted catalogue.
+- [x] 2.2 Implement one versioned graph that adapts the existing 12 foundation and 3 starter lessons without changing their old deep links or progress meaning.
+- [x] 2.3 Add curriculum segment, node availability, objective, misconception, transfer, authority, content hash, and version metadata to the trusted catalogue.
 - [ ] 2.4 Implement canonical content hashing, immutable reviewed versions, candidate/auto-validated/human-reviewed promotion rules, and tamper rejection.
 - [ ] 2.5 Add first-release problem-modeling nodes for input/output, state and invariant, sample tracing, brute force and complexity, and edge-case testing with reviewed five-stage content.
 - [ ] 2.6 Add or upgrade reviewed five-stage nodes for array/string traversal, hash lookup, two pointers, sliding window, stack/queue, and sorting/binary search.
@@ -22,15 +22,15 @@
 - [ ] 3.2 Implement a resumable short diagnosis that captures goal/time, state prediction, basic code completion, and problem-modeling evidence without saving unnecessary free text.
 - [ ] 3.3 Implement deterministic placement and smallest-unmet-prerequisite selection with evidence citations, confidence, uncertainty, and challenge-to-skip behavior.
 - [ ] 3.4 Implement immutable `BridgePlan` versions whose authoritative changes require validated learning events and whose model suggestions remain non-authoritative.
-- [ ] 3.5 Rebuild the first-time result as a direct handoff to one ten-minute mission and keep the first meaningful run reachable without opening the full problem library.
-- [ ] 3.6 Update Today so one primary mission always states goal, duration, prerequisite, expected gain, reason, confidence, completion criterion, and what evidence can change the plan.
+- [x] 3.5 Rebuild the first-time result as a direct handoff to one ten-minute mission and keep the first meaningful run reachable without opening the full problem library.
+- [x] 3.6 Update Today so one primary mission always states goal, duration, prerequisite, expected gain, reason, confidence, completion criterion, and what evidence can change the plan.
 
 ## 4. Unified training session
 
 - [ ] 4.1 Add failing state-machine tests for stage order, retry behavior, one-primary-action presentation, refresh recovery, and forbidden transfer before verified prediction/local coding.
-- [ ] 4.2 Refactor the existing Training Cabin to consume the versioned `TrainingSession` contract and preserve legacy lesson URLs through an adapter.
+- [x] 4.2 Refactor the existing Training Cabin to consume the versioned `TrainingSession` contract and preserve legacy lesson URLs through an adapter.
 - [ ] 4.3 Make every stage record bounded pedagogical evidence with curriculum version and evidence references, without recording source code or free-form answers in the learning event stream.
-- [ ] 4.4 Add trusted state visualizations for the first-release nodes and label worked examples separately from live execution evidence.
+- [x] 4.4 Add trusted state visualizations for the first-release nodes and label worked examples separately from live execution evidence.
 - [ ] 4.5 Add Mentor acceleration rules that may shorten already-proven stages but may not skip independent transfer or convert model confidence into completion.
 - [ ] 4.6 Restore the active mission, current stage, local exercise state, and pending transfer across refresh and authenticated cross-device bootstrap.
 
@@ -67,7 +67,7 @@
 ## 8. Cross-surface user experience
 
 - [ ] 8.1 Add route and integration tests proving Today, map, cabin, workspace, review, insights, exam, and practicum consume the same curriculum and learner projection.
-- [ ] 8.2 Rebuild the learning map around five curriculum segments, explicit prerequisites, evidence states, current mission, locked reasons, and future-node availability.
+- [x] 8.2 Rebuild the learning map around five curriculum segments, explicit prerequisites, evidence states, current mission, locked reasons, and future-node availability.
 - [ ] 8.3 Add one persistent contextual Mentor timeline that shows observation, evidence, hypothesis, evidence gap, tool action, next step, verification, degradation mode, and bound attempt.
 - [ ] 8.4 Make growth replay explain starting point, assisted versus independent actions, transfer status, due reviews, current gap, and why the next mission changed.
 - [ ] 8.5 Apply the established readability and responsive navigation standards to diagnosis, Today, map, cabin, remediation, report, and assessment flows.

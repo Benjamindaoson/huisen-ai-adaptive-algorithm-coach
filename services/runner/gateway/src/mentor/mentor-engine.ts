@@ -25,7 +25,8 @@ export type MentorSession = {
   timeline: MentorTimelineEvent[];
   twin: LearnerTwin;
   lastAttemptId?: string;
-  pendingPrompt?: { question: string; expectedConcept: string; evidenceRefs: string[]; misconceptionId?: string };
+  pendingPrompt?: { question: string; expectedConcept: string; targetSkillId?: string; evidenceRefs: string[]; misconceptionId?: string };
+  transferTask?: { problemId: string; title: string; skillIds: string[]; evidenceRefs: string[] };
 };
 export type MentorTurnInput = {
   version: 1;
@@ -61,11 +62,16 @@ function createSession(input: MentorTurnInput, id: string, now: Date, mode: Ment
     ...(model ? { model } : {}), judgeOutcome: input.attempt.outcome, nextAction: '正在收集证据。', timeline: [],
     twin: createLearnerTwin(input.learnerId, now), lastAttemptId: input.attempt.id,
   };
+  addAttemptObservation(session, input, now);
+  return session;
+}
+
+function addAttemptObservation(session: MentorSession, input: MentorTurnInput, now: Date): void {
   addEvent(session, now, {
     type: 'observation', title: '判题器给出的确定事实',
-    detail: `${input.attempt.summary}；结果 ${input.attempt.outcome}`, evidenceRefs: [`judge:${input.problem.id}:public`], status: 'complete',
+    detail: `${input.attempt.summary}；结果 ${input.attempt.outcome}`,
+    evidenceRefs: [`judge:${input.problem.id}:public`, `attempt:${input.attempt.id}`], status: 'complete',
   });
-  return session;
 }
 
 function toolMessage(callId: string, content: unknown): MentorModelMessage {
@@ -166,8 +172,10 @@ async function executeTool(
   }
   if (name === 'ask_learner') {
     const evidenceRefs = args.evidenceRefs as string[];
+    const targetSkillId = String(args.targetSkillId);
+    if (!input.problem.skillIds.includes(targetSkillId)) throw new Error(`Invalid learner question target skill: ${targetSkillId}`);
     const misconception = context.evidence?.find((item) => item.kind === 'misconception')?.metadata.misconceptionId;
-    session.pendingPrompt = { question: String(args.question), expectedConcept: String(args.expectedConcept), evidenceRefs, ...(misconception ? { misconceptionId: String(misconception) } : {}) };
+    session.pendingPrompt = { question: String(args.question), expectedConcept: String(args.expectedConcept), targetSkillId, evidenceRefs, ...(misconception ? { misconceptionId: String(misconception) } : {}) };
     session.phase = 'awaiting-prediction'; session.nextAction = String(args.question);
     addEvent(session, now, { type: 'learner-question', tool: name, title: '先预测，再修改', detail: String(args.question), evidenceRefs, status: 'unverified' });
     return { result: { phase: session.phase, question: session.nextAction }, summary: '等待学习者预测', evidenceRefs, stop: true };
@@ -180,12 +188,40 @@ async function executeTool(
   throw new Error(`Unsupported Mentor tool: ${name}`);
 }
 
+function hasEmptySolutionScaffold(language: AllowedLanguage, sourceCode: string): boolean {
+  const clean = (value: string) => value
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '')
+    .replace(/#.*$/gm, '')
+    .replace(/\bpass\b/g, '')
+    .replace(/[;\s]/g, '');
+  if (language === 'javascript') {
+    const body = sourceCode.match(/function\s+(?:solve|solution)\s*\([^)]*\)\s*\{([\s\S]*?)\}/i)?.[1]
+      ?? sourceCode.match(/(?:const|let|var)\s+(?:solve|solution)\s*=\s*(?:\([^)]*\)|[A-Za-z_$][\w$]*)\s*=>\s*\{([\s\S]*?)\}/i)?.[1];
+    return body !== undefined && clean(body) === '';
+  }
+  if (language === 'python') {
+    const body = sourceCode.match(/def\s+(?:solve|solution)\s*\([^)]*\)\s*:\s*((?:\r?\n[ \t]+[^\r\n]*)+)/i)?.[1];
+    return body !== undefined && clean(body) === '';
+  }
+  return false;
+}
+
 async function deterministicPolicy(session: MentorSession, input: MentorTurnInput, context: RuntimeContext, options: MentorRuntimeOptions, executions: MentorToolExecution[], now: Date): Promise<void> {
-  const steps: Array<{ name: MentorToolName; arguments: Record<string, unknown> }> = [
-    { name: 'inspect_syntax', arguments: { focus: 'first failing path' } },
-    { name: 'search_evidence', arguments: { query: `${input.problem.title} ${input.attempt.summary} 边界`, limit: 5 } },
-    { name: 'ask_learner', arguments: { question: /<=\s*[A-Za-z_$][\w$]*\.length/.test(input.attempt.sourceCode) ? '当循环变量等于数组 length 时，代码会访问哪个下标？' : '请预测第一个失败用例执行到关键分支时，哪个变量会首先偏离预期？', expectedConcept: /<=\s*[A-Za-z_$][\w$]*\.length/.test(input.attempt.sourceCode) ? '越界' : '首次偏离', evidenceRefs: ['judge:public', 'ast:current'] } },
-  ];
+  const modeling = hasEmptySolutionScaffold(input.attempt.language, input.attempt.sourceCode);
+  const boundary = /<=\s*[A-Za-z_$][\w$]*\.length/.test(input.attempt.sourceCode);
+  const question = modeling
+    ? '先不要调试变量。请用一句话说明：输入里的哪些信息决定输出，以及你准备先得到哪个中间结果？'
+    : boundary
+      ? '当循环变量等于数组 length 时，代码会访问哪个下标？'
+      : '请预测第一个失败用例执行到关键分支时，哪个变量会首先偏离预期？';
+  const expectedConcept = modeling ? '输入到输出的中间结果' : boundary ? '越界' : '首次偏离';
+  const targetSkillId = (boundary ? input.problem.skillIds.find((skillId) => skillId === 'array') : undefined) ?? input.problem.skillIds[0];
+  if (!targetSkillId) throw new Error('Mentor requires at least one problem skill before asking the learner');
+  const steps: Array<{ name: MentorToolName; arguments: Record<string, unknown> }> = [];
+  if (!context.report) steps.push({ name: 'inspect_syntax', arguments: { focus: 'first failing path' } });
+  if (!context.evidence) steps.push({ name: 'search_evidence', arguments: { query: `${input.problem.title} ${input.attempt.summary} 边界`, limit: 5 } });
+  steps.push({ name: 'ask_learner', arguments: { question, expectedConcept, targetSkillId, evidenceRefs: ['judge:public', 'ast:current'] } });
   for (const step of steps) {
     const started = Date.now();
     const execution = await executeTool(session, input, context, step.name, step.arguments, options, now);
@@ -208,6 +244,14 @@ function handleEditOrTransferOutcome(session: MentorSession, input: MentorTurnIn
     const transfer = options.retriever.search({ text: `${input.problem.title} 迁移 边界`, skillIds: input.problem.skillIds, misconceptionIds: [], limit: 10 })
       .find((item) => item.kind === 'problem' && String(item.metadata.problemId ?? item.ref.replace(/^problem:/, '')) !== session.problemId);
     session.phase = 'transfer';
+    if (transfer) {
+      session.transferTask = {
+        problemId: String(transfer.metadata.problemId ?? transfer.ref.replace(/^problem:/, '')),
+        title: transfer.title,
+        skillIds: input.problem.skillIds,
+        evidenceRefs: [transfer.ref],
+      };
+    }
     session.nextAction = transfer ? `迁移验证：请独立完成「${transfer.title}」，本轮不提供同型提示。` : '迁移验证：请用相同技能解决一个不同输入结构的问题，本轮不提供同型提示。';
     addEvent(session, now, { type: 'learner-action', title: '进入迁移验证', detail: session.nextAction, evidenceRefs: transfer ? [transfer.ref] : input.problem.skillIds.map((id) => `skill:${id}`), status: 'complete' });
     session.lastAttemptId = input.attempt.id;
@@ -224,19 +268,51 @@ function handleEditOrTransferOutcome(session: MentorSession, input: MentorTurnIn
   return null;
 }
 
+function supportsInstantiatedRowCount(prompt: NonNullable<MentorSession['pendingPrompt']>, response: string): boolean {
+  if (!/行数|参数行|评分行/.test(prompt.expectedConcept) || !/多少行|几行/.test(prompt.question)) return false;
+  const formula = prompt.expectedConcept.match(/(\d+)\s*\+\s*([a-z])/i);
+  if (!formula) return false;
+  const constant = Number(formula[1]);
+  const variable = formula[2];
+  const assignment = prompt.question.match(new RegExp(`${variable}\\s*=\\s*(\\d+)`, 'i'));
+  if (!assignment) return false;
+  const variableValue = Number(assignment[1]);
+  const statedTotal = response.match(/(?:一共|总共|共)\s*(\d+)\s*行/);
+  if (!statedTotal || Number(statedTotal[1]) !== constant + variableValue) return false;
+  const explainsStructure = /第一行/.test(response) && /后面|评分|数据|输入/.test(response);
+  const instantiatesVariable = new RegExp(`${variable}\\s*=\\s*${variableValue}`, 'i').test(response)
+    || new RegExp(`${variableValue}\\s*行`).test(response);
+  return explainsStructure && instantiatesVariable;
+}
+
 function handleLearnerResponse(session: MentorSession, input: MentorTurnInput, now: Date): MentorTurnResult | null {
   if (!input.learnerResponse || !session.pendingPrompt) return null;
   const response = input.learnerResponse.trim().slice(0, 1_000);
-  const correct = response.includes(session.pendingPrompt.expectedConcept) || (/越界|边界/.test(session.pendingPrompt.expectedConcept) && /越界|length|下标/.test(response));
+  const normalize = (value: string) => value.toLowerCase().replace(/比较/g, '比').replace(/[^\p{L}\p{N}]/gu, '');
+  const expected = normalize(session.pendingPrompt.expectedConcept);
+  const actual = normalize(response);
+  const hasSharedSpecificPhrase = expected.length >= 5 && Array.from({ length: expected.length - 4 }, (_, index) => expected.slice(index, index + 5)).some((phrase) => actual.includes(phrase));
+  const boundaryConcept = /越界|边界/.test(expected);
+  const correct = actual.includes(expected) || hasSharedSpecificPhrase || (boundaryConcept && /越界|length|下标/.test(actual))
+    || supportsInstantiatedRowCount(session.pendingPrompt, response);
   const responseRef = `learner-response:${session.id}:${session.timeline.length + 1}`;
   addEvent(session, now, { type: 'learner-response', title: '你的预测', detail: response, evidenceRefs: [responseRef], status: correct ? 'supported' : 'unverified' });
-  session.twin = projectLearnerTwin(session.twin, [{
-    kind: correct ? 'prediction-correct' : 'failure', skillIds: input.problem.skillIds, evidenceRef: responseRef, at: now.toISOString(),
-    ...(session.pendingPrompt.misconceptionId ? { misconceptionId: session.pendingPrompt.misconceptionId } : { misconceptionId: 'off-by-one' }),
-  }], now);
+  if (!correct) {
+    session.phase = 'awaiting-prediction';
+    session.nextAction = '我还不能可靠判断你的预测是否正确。请再补充一句：你依据的是哪条规则，或哪个关键状态会先发生变化？先不要改代码。';
+    addEvent(session, now, { type: 'learner-action', title: '还需要一个关键判断', detail: session.nextAction, evidenceRefs: [responseRef, ...session.pendingPrompt.evidenceRefs], status: 'unverified' });
+    return { version: 1, session, executions: [], provider: providerFor(session) };
+  }
+  const targetSkillId = session.pendingPrompt.targetSkillId ?? input.problem.skillIds[0];
+  session.twin = projectLearnerTwin(session.twin, targetSkillId ? [{
+    kind: 'prediction-correct', skillIds: [targetSkillId], evidenceRef: responseRef, at: now.toISOString(),
+    ...(session.pendingPrompt.misconceptionId ? { misconceptionId: session.pendingPrompt.misconceptionId } : {}),
+  }] : [], now);
   session.phase = 'awaiting-edit';
-  session.nextAction = correct ? '只修改循环上界，重新运行同一个失败用例；先不要改算法主体。' : '在第一次失败输入上记录循环变量和访问下标，找出首次偏离后只修改一处。';
-  addEvent(session, now, { type: 'learner-action', title: correct ? '概念判断正确，缩小到实现修改' : '先补足状态证据', detail: session.nextAction, evidenceRefs: [responseRef, ...session.pendingPrompt.evidenceRefs], status: 'complete' });
+  session.nextAction = boundaryConcept
+    ? '只修改循环上界，重新运行同一个失败用例；先不要改算法主体。'
+    : '你的关键判断有依据。现在只实现或修改与这个判断直接相关的一小步，然后重新运行；先不要一次写完整答案。';
+  addEvent(session, now, { type: 'learner-action', title: '概念判断正确，缩小到实现修改', detail: session.nextAction, evidenceRefs: [responseRef, ...session.pendingPrompt.evidenceRefs], status: 'complete' });
   delete session.pendingPrompt;
   return { version: 1, session, executions: [], provider: { mode: session.mode, ...(session.model ? { model: session.model } : {}), calls: 0, inputTokens: 0, outputTokens: 0, latencyMs: 0 } };
 }
@@ -246,14 +322,22 @@ export async function runMentorTurn(input: MentorTurnInput, options: MentorRunti
   const initialMode: MentorSession['mode'] = options.model ? 'deepseek' : 'deterministic';
   const session = input.session ? structuredClone(input.session) : createSession(input, (options.id ?? (() => `mentor-${randomUUID()}`))(), now, initialMode, options.model?.model);
   if (!input.session && options.initialTwin?.learnerId === input.learnerId) session.twin = structuredClone(options.initialTwin);
+  session.twin.lastChanges = [];
   session.judgeOutcome = input.attempt.outcome;
   const response = handleLearnerResponse(session, input, now);
   if (response) return response;
   const outcome = handleEditOrTransferOutcome(session, input, options, now);
   if (outcome) return outcome;
+  if (input.session && session.lastAttemptId !== input.attempt.id) {
+    addAttemptObservation(session, input, now);
+    session.lastAttemptId = input.attempt.id;
+  }
+  session.mode = options.model ? 'deepseek' : 'deterministic';
+  if (options.model) session.model = options.model.model;
+  else delete session.model;
   const context: RuntimeContext = {};
   const executions: MentorToolExecution[] = [];
-  const provider = { mode: session.mode, ...(session.model ? { model: session.model } : {}), calls: 0, inputTokens: 0, outputTokens: 0, latencyMs: 0 };
+  const provider: MentorTurnResult['provider'] = { mode: session.mode, ...(session.model ? { model: session.model } : {}), calls: 0, inputTokens: 0, outputTokens: 0, latencyMs: 0 };
   if (!options.model) {
     await deterministicPolicy(session, input, context, options, executions, now);
     return { version: 1, session, executions, provider };
@@ -264,6 +348,7 @@ export async function runMentorTurn(input: MentorTurnInput, options: MentorRunti
   ];
   const fingerprints = new Map<string, number>();
   let invalidActions = 0;
+  let evidenceSearches = 0;
   try {
     for (let step = 0; step < 8; step += 1) {
       const result = await options.model.complete({ messages, tools: MENTOR_TOOL_DEFINITIONS });
@@ -281,6 +366,8 @@ export async function runMentorTurn(input: MentorTurnInput, options: MentorRunti
           const repeats = (fingerprints.get(fingerprint) ?? 0) + 1;
           fingerprints.set(fingerprint, repeats);
           if (repeats > 2) throw new Error(`Mentor tool repeat budget exceeded: ${validated.name}`);
+          if (validated.name === 'search_evidence' && evidenceSearches >= 2) throw new Error('Mentor tool budget exceeded: search_evidence');
+          if (validated.name === 'search_evidence') evidenceSearches += 1;
           const started = Date.now();
           const execution = await executeTool(session, input, context, validated.name, validated.arguments, options, now);
           executions.push({ id: `${session.id}:tool:${executions.length + 1}`, tool: validated.name, arguments: validated.arguments, summary: execution.summary, evidenceRefs: execution.evidenceRefs, durationMs: Math.max(0, Date.now() - started) });
@@ -303,7 +390,9 @@ export async function runMentorTurn(input: MentorTurnInput, options: MentorRunti
     throw new Error('Mentor step budget exhausted');
   } catch (error) {
     session.mode = 'fallback'; provider.mode = 'fallback';
-    addEvent(session, now, { type: 'rejected-model-action', title: '模型动作被安全策略拒绝', detail: error instanceof Error ? error.message : 'Invalid model action', evidenceRefs: [], status: 'rejected' });
+    const detail = error instanceof Error ? error.message : 'Invalid model action';
+    const unavailable = /timeout|aborted|unavailable|circuit|fetch/i.test(detail);
+    addEvent(session, now, { type: 'rejected-model-action', title: unavailable ? '模型请求未完成，已切换确定性工具' : '模型动作被安全策略拒绝', detail, evidenceRefs: [], status: 'rejected' });
     await deterministicPolicy(session, input, context, options, executions, now);
     return { version: 1, session, executions, provider };
   }

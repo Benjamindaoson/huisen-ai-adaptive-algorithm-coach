@@ -30,4 +30,27 @@ describe('interprocedural semantic analysis', () => {
     const semantic = analyzeSemantics({ parsed, report: analyzeProgram({ parsed, sourceCode }), sourceCode });
     expect(semantic.pathRisks).toContainEqual(expect.objectContaining({ kind: 'possibly-uninitialized', status: 'unverified' }));
   });
+
+  it('does not blame JavaScript runtime scaffolding and deduplicates source-identical calls', async () => {
+    const sourceCode = `const fs = require('fs');
+const input = fs.readFileSync(0, 'utf8').trim().split(/\\r?\\n/);
+function solve(lines) {
+  // learner implementation belongs here
+}
+solve(input);`;
+    const parsed = await parseSource({ language: 'javascript', sourceCode });
+    const semantic = analyzeSemantics({ parsed, report: analyzeProgram({ parsed, sourceCode }), sourceCode });
+    expect(semantic.pathRisks.filter((risk) => risk.kind === 'unresolved-call')).toEqual([]);
+    expect(semantic.callGraph.filter((edge) => edge.callee === 'readFileSync')).toHaveLength(1);
+    expect(new Set(semantic.callGraph.map((edge) => `${edge.callee}:${edge.evidenceRef}`)).size).toBe(semantic.callGraph.length);
+  });
+
+  it('retains one evidence-backed risk for a genuinely unresolved local call', async () => {
+    const sourceCode = `function solve(lines) { return missingHelper(lines); }\nsolve([]);`;
+    const parsed = await parseSource({ language: 'javascript', sourceCode });
+    const semantic = analyzeSemantics({ parsed, report: analyzeProgram({ parsed, sourceCode }), sourceCode });
+    expect(semantic.pathRisks.filter((risk) => risk.kind === 'unresolved-call')).toEqual([
+      expect.objectContaining({ message: expect.stringContaining('missingHelper'), evidenceRefs: [expect.stringContaining('ast:javascript:')] }),
+    ]);
+  });
 });

@@ -46,3 +46,11 @@ it('states public-sample scope even when every case passes', () => {
   expect(screen.getByText(/不代表已通过隐藏测试/)).toBeTruthy();
   expect(screen.queryByText('正式通过')).toBeNull();
 });
+
+it('keeps independent transfer and delayed review free of coach, hints and references', () => {
+  render(<SubmissionFeedback submission={failedSubmission} attempt={failedAttempt} problem={problem} mastery={[]} onRetry={() => undefined} onHint={() => undefined} onReference={() => undefined} assistanceAllowed={false} />);
+  expect(screen.queryByText('教练诊断')).toBeNull();
+  expect(screen.queryByRole('button', { name: '给我一个提示' })).toBeNull();
+  expect(screen.queryByRole('button', { name: '查看参考答案' })).toBeNull();
+  expect(screen.getByText(/独立验证模式/)).toBeTruthy();
+});

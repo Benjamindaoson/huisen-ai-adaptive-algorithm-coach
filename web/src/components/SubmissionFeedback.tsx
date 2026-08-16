@@ -12,13 +12,14 @@ type Props = {
   onRetry: () => void;
   onHint: () => void;
   onReference: () => void;
+  assistanceAllowed?: boolean;
 };
 
 const verdictLabels: Record<SampleVerdict, string> = {
   passed: '通过', 'wrong-answer': '答案错误', 'compile-error': '编译错误', 'runtime-error': '运行错误', timeout: '运行超时', unavailable: '服务不可用',
 };
 
-export function SubmissionFeedback({ submission, attempt, problem, mastery, onRetry, onHint, onReference }: Props) {
+export function SubmissionFeedback({ submission, attempt, problem, mastery, onRetry, onHint, onReference, assistanceAllowed = true }: Props) {
   const diagnosis = buildLocalDiagnosis(buildCoachRequest(problem, attempt, mastery, 1));
   return <div className={`submission-feedback ${submission.allPassed ? 'passed' : 'failed'}`}>
     <section className="verdict-summary">
@@ -32,17 +33,17 @@ export function SubmissionFeedback({ submission, attempt, problem, mastery, onRe
       {caseResult.stderr && <pre className="stderr">{caseResult.stderr}</pre>}
     </details>)}</div>
 
-    <section className="inline-coach-card">
+    {assistanceAllowed ? <section className="inline-coach-card">
       <header><div><span className="ai-mark">AI</span><strong>教练诊断</strong></div><small>本地证据诊断 · 置信度 {Math.round(diagnosis.confidence * 100)}%</small></header>
       <h3>{diagnosis.diagnosis}</h3>
       <ul>{diagnosis.evidence.slice(0, 3).map((evidence) => <li key={evidence}>{evidence}</li>)}</ul>
       <p><strong>下一步：</strong>{diagnosis.nextAction}</p>
-    </section>
+    </section> : <p className="independent-assessment-note">独立验证模式：导师、提示和参考答案保持关闭，只记录你的独立表现。</p>}
 
     <div className="feedback-actions">
       <button type="button" className="primary-action" onClick={onRetry}>修正并重试</button>
-      <button type="button" className="secondary-action" onClick={onHint}>给我一个提示</button>
-      <button type="button" className="ghost-action" onClick={onReference}>查看参考答案</button>
+      {assistanceAllowed && <button type="button" className="secondary-action" onClick={onHint}>给我一个提示</button>}
+      {assistanceAllowed && <button type="button" className="ghost-action" onClick={onReference}>查看参考答案</button>}
     </div>
   </div>;
 }

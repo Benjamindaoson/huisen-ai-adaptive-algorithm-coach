@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   EXAM_STORAGE_KEY,
   createExamSession,
+  getExamModePolicy,
   loadExam,
   remainingExamMs,
   saveExam,
@@ -16,6 +17,38 @@ describe('exam session', () => {
     expect(exam.deadlineAt).toBe(5_401_000);
     expect(remainingExamMs(exam, 61_000)).toBe(5_340_000);
     expect(remainingExamMs(exam, 9_000_000)).toBe(0);
+  });
+
+  it('defaults new and legacy sessions to the explicit independent no-AI policy', () => {
+    const created = createExamSession(['a'], 90, 1_000, 'exam-1');
+    expect(created.mode).toBe('independent');
+    expect(getExamModePolicy(created)).toMatchObject({
+      mode: 'independent',
+      aiAssistance: 'disabled',
+      mentor: 'unavailable',
+      references: 'unavailable',
+      historicalSolutions: 'unavailable',
+    });
+
+    const storage = new MemoryStorage();
+    storage.setItem(EXAM_STORAGE_KEY, JSON.stringify({
+      version: 1,
+      id: 'legacy-exam',
+      status: 'running',
+      problemIds: ['a'],
+      currentProblemId: 'a',
+      startedAt: 1_000,
+      deadlineAt: 5_401_000,
+      answers: {},
+    }));
+
+    expect(loadExam(storage)).toMatchObject({
+      version: 2,
+      id: 'legacy-exam',
+      mode: 'independent',
+      collaborationEvents: [],
+      deadlineAt: 5_401_000,
+    });
   });
 
   it('keeps the language and source isolated by problem', () => {
@@ -44,6 +77,26 @@ describe('exam session', () => {
     storage.setItem(EXAM_STORAGE_KEY, JSON.stringify({ ...exam, deadlineAt: 'tomorrow' }));
     expect(loadExam(storage)).toBeNull();
     storage.setItem(EXAM_STORAGE_KEY, '{bad json');
+    expect(loadExam(storage)).toBeNull();
+  });
+
+  it('rejects a persisted independent session that contains collaboration evidence', () => {
+    const storage = new MemoryStorage();
+    storage.setItem(EXAM_STORAGE_KEY, JSON.stringify({
+      version: 2,
+      id: 'tampered-exam',
+      status: 'running',
+      mode: 'independent',
+      problemIds: ['a'],
+      currentProblemId: 'a',
+      startedAt: 1_000,
+      deadlineAt: 5_401_000,
+      answers: {},
+      collaborationEvents: [{
+        id: 'plan-1', type: 'plan', recordedAt: 2_000,
+        evidence: [{ id: 'prompt-1', kind: 'prompt', summary: 'Plan.' }],
+      }],
+    }));
     expect(loadExam(storage)).toBeNull();
   });
 

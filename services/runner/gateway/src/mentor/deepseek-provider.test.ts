@@ -12,8 +12,9 @@ const tools = [{
 describe('DeepSeek mentor provider', () => {
   it('resolves only server-side DeepSeek configuration with current defaults', () => {
     expect(resolveDeepSeekConfig({ DEEPSEEK_API_KEY: 'secret' })).toMatchObject({
-      apiKey: 'secret', apiUrl: 'https://api.deepseek.com', model: 'deepseek-v4-flash',
+      apiKey: 'secret', apiUrl: 'https://api.deepseek.com', model: 'deepseek-chat',
     });
+    expect(resolveDeepSeekConfig({ DEEPSEEK_API_KEY: 'secret', DEEPSEEK_MODEL: 'custom-model' })).toMatchObject({ model: 'custom-model' });
     expect(resolveDeepSeekConfig({})).toBeNull();
   });
 
@@ -56,5 +57,32 @@ describe('DeepSeek mentor provider', () => {
       fetcher: async () => new Response('busy', { status: 503 }),
     });
     await expect(unavailable.complete({ messages: [{ role: 'user', content: 'x' }], tools })).rejects.toThrow('DeepSeek unavailable: 503');
+  });
+
+  it('opens a circuit after repeated provider failures and probes again after cooldown', async () => {
+    let now = 1_000;
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(new Response('busy', { status: 503 }))
+      .mockResolvedValueOnce(new Response('busy', { status: 503 }))
+      .mockResolvedValueOnce(new Response('limited', { status: 429 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        choices: [{ message: { content: 'recovered' }, finish_reason: 'stop' }],
+      }), { status: 200 }));
+    const provider = createDeepSeekMentorProvider({
+      apiKey: 'secret', apiUrl: 'https://api.deepseek.com', model: 'deepseek-v4-flash', fetcher,
+      now: () => now,
+      circuit: { failureThreshold: 3, cooldownMs: 30_000 },
+    });
+    const request = { messages: [{ role: 'user' as const, content: 'x' }], tools };
+
+    await expect(provider.complete(request)).rejects.toThrow('DeepSeek unavailable: 503');
+    await expect(provider.complete(request)).rejects.toThrow('DeepSeek unavailable: 503');
+    await expect(provider.complete(request)).rejects.toThrow('DeepSeek unavailable: 429');
+    await expect(provider.complete(request)).rejects.toThrow('DeepSeek circuit open');
+    expect(fetcher).toHaveBeenCalledTimes(3);
+
+    now += 30_001;
+    await expect(provider.complete(request)).resolves.toMatchObject({ content: 'recovered' });
+    expect(fetcher).toHaveBeenCalledTimes(4);
   });
 });

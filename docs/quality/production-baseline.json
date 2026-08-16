@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-15T12:01:15.512Z",
+  "catalog": {
+    "problemCount": 754,
+    "hiddenJudgePackCount": 4,
+    "hiddenJudgeCoverage": 0.0053
+  },
+  "frontend": {
+    "apiConfigured": false,
+    "runnerConfigured": false,
+    "coachConfigured": false
+  },
+  "gateway": {
+    "reachable": true,
+    "storage": "postgres",
+    "identity": "account-postgres",
+    "model": "deepseek-chat"
+  },
+  "mentorQuality": {
+    "eligibleRealCases": 0,
+    "minimumRealCases": 100,
+    "passed": false,
+    "failures": [
+      "eligible-real-cases: 0/100",
+      "coverage:languages:javascript",
+      "coverage:languages:python",
+      "coverage:languages:java",
+      "coverage:languages:cpp",
+      "coverage:learnerBands:beginner",
+      "coverage:learnerBands:intermediate",
+      "coverage:learnerBands:advanced",
+      "coverage:errorFamilies:boundary",
+      "coverage:errorFamilies:input",
+      "coverage:errorFamilies:numeric",
+      "coverage:errorFamilies:edge-case",
+      "coverage:verdicts:wrong-answer",
+      "coverage:verdicts:runtime-error",
+      "coverage:verdicts:compile-error",
+      "coverage:verdicts:timeout"
+    ]
+  }
+}

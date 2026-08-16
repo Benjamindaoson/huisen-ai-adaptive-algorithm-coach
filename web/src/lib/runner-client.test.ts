@@ -5,8 +5,8 @@ const request = { language: 'python' as const, sourceCode: 'print("ok")', stdin:
 
 afterEach(() => vi.unstubAllGlobals());
 
-it('uses the public Judge0 endpoint when no private runner is configured', () => {
-  expect(resolveRunnerUrl()).toBe('https://ce.judge0.com');
+it('fails closed when no private runner is configured', () => {
+  expect(resolveRunnerUrl()).toBe('');
   expect(resolveRunnerUrl('http://127.0.0.1:8787/')).toBe('http://127.0.0.1:8787');
 });
 
@@ -20,11 +20,9 @@ it('normalizes a non-200 runner response into an unavailable result', async () =
   await expect(runCode('http://localhost:8787', request)).resolves.toMatchObject({ kind: 'unavailable' });
 });
 
-it('normalizes a public Judge0 success response for the learning workspace', async () => {
-  const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ stdout: 'b2sK', stderr: null, status: { id: 3 }, time: '0.01' }), { status: 201 }));
+it('does not send source code anywhere when the private runner URL is absent', async () => {
+  const fetchMock = vi.fn();
   vi.stubGlobal('fetch', fetchMock);
-  await expect(runCode('https://ce.judge0.com', request)).resolves.toMatchObject({ kind: 'success', stdout: 'ok\n', timeMs: 10 });
-  expect(fetchMock).toHaveBeenCalledWith('https://ce.judge0.com/submissions?base64_encoded=true&wait=true', expect.objectContaining({
-    body: JSON.stringify({ language_id: 71, source_code: 'cHJpbnQoIm9rIik=', stdin: '' }),
-  }));
+  await expect(runCode('', request)).resolves.toMatchObject({ kind: 'unavailable' });
+  expect(fetchMock).not.toHaveBeenCalled();
 });

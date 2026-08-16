@@ -1,16 +1,16 @@
 import type { ProblemLanguage } from './catalog';
+import { retainLearningEvents } from './learning-retention';
+import {
+  LEARNING_DIAGNOSTIC_STEPS, LEARNING_EVENT_DATA_KEYS, LEARNING_EVENT_KINDS, LEARNING_LANGUAGES,
+  LEARNING_LESSON_STAGES, LEARNING_PRACTICUM_PHASES, LEARNING_REFLECTION_TAGS, LEARNING_TARGETS,
+  LEARNING_TRAINING_STAGES, type LearningEventKind, type LearningTarget,
+} from '../../../contracts/learning-event-contract';
 
 export const LEARNER_MEMORY_STORAGE_KEY = 'od-learner-memory-v1';
-export const MAX_LEARNING_EVENTS = 500;
+export { MAX_LEARNING_EVENTS } from './learning-retention';
 
-export const LEARNING_EVENT_KINDS = [
-  'goal-updated', 'attempt-recorded', 'hint-requested', 'hint-received',
-  'reference-unlocked', 'mastery-check-started', 'mastery-check-passed', 'mastery-check-failed',
-  'lesson-started', 'lesson-checkpoint-passed', 'lesson-completed', 'lesson-transfer-started',
-] as const;
-
-export type LearningEventKind = (typeof LEARNING_EVENT_KINDS)[number];
-export type LearningTarget = 'od-exam' | 'interview' | 'foundation';
+export { LEARNING_EVENT_KINDS };
+export type { LearningEventKind, LearningTarget };
 
 export type LearnerProfile = {
   learnerId: string;
@@ -32,8 +32,17 @@ export type LearningEventData = {
   dailyMinutes?: number;
   preferredLanguage?: ProblemLanguage;
   lessonId?: string;
-  stage?: 'explain' | 'observe' | 'predict' | 'complete' | 'transfer';
+  recommendationId?: string;
+  stage?: 'explain' | 'observe' | 'predict' | 'complete' | 'build' | 'transfer';
   correct?: boolean;
+  phase?: 'understanding' | 'diagnosis' | 'planning' | 'implementation' | 'verification' | 'reflection' | 'completed';
+  choiceId?: string;
+  passed?: boolean;
+  passedCount?: number;
+  totalCount?: number;
+  reflectionTag?: 'boundary-contract' | 'test-first' | 'cross-file-impact';
+  curriculumVersion?: string;
+  diagnosticStep?: 'state' | 'implementation' | 'modeling';
 };
 
 export type LearningEvent = {
@@ -49,10 +58,14 @@ export type LearningEvent = {
 export type LearnerMemory = { version: 1; profile: LearnerProfile; events: LearningEvent[] };
 export type LearningSignal = Pick<LearningEvent, 'kind' | 'data'> & Partial<Pick<LearningEvent, 'problemId' | 'attemptId'>>;
 
-const TARGETS: LearningTarget[] = ['od-exam', 'interview', 'foundation'];
-const LANGUAGES: ProblemLanguage[] = ['java', 'python', 'javascript', 'cpp'];
-const DATA_KEYS = ['hintLevel', 'outcome', 'assisted', 'skillIds', 'reason', 'target', 'examDate', 'dailyMinutes', 'preferredLanguage', 'lessonId', 'stage', 'correct'];
-const LESSON_STAGES = ['explain', 'observe', 'predict', 'complete', 'transfer'];
+const TARGETS: readonly LearningTarget[] = LEARNING_TARGETS;
+const LANGUAGES: readonly ProblemLanguage[] = LEARNING_LANGUAGES;
+const DATA_KEYS: readonly string[] = LEARNING_EVENT_DATA_KEYS;
+const LESSON_STAGES: readonly string[] = LEARNING_LESSON_STAGES;
+const TRAINING_STAGES: readonly string[] = LEARNING_TRAINING_STAGES;
+const PRACTICUM_PHASES: readonly string[] = LEARNING_PRACTICUM_PHASES;
+const REFLECTION_TAGS: readonly string[] = LEARNING_REFLECTION_TAGS;
+const DIAGNOSTIC_STEPS: readonly string[] = LEARNING_DIAGNOSTIC_STEPS;
 
 function isTimestamp(value: unknown): value is string {
   return typeof value === 'string' && !Number.isNaN(Date.parse(value));
@@ -92,8 +105,17 @@ function parseEventData(value: unknown): LearningEventData {
   if (data.dailyMinutes !== undefined && (!Number.isInteger(data.dailyMinutes) || (data.dailyMinutes as number) < 10 || (data.dailyMinutes as number) > 480)) throw new Error('Invalid learning event data');
   if (data.preferredLanguage !== undefined && !LANGUAGES.includes(data.preferredLanguage as ProblemLanguage)) throw new Error('Invalid learning event data');
   if (data.lessonId !== undefined && !validId(data.lessonId)) throw new Error('Invalid learning event data');
-  if (data.stage !== undefined && !LESSON_STAGES.includes(data.stage as string)) throw new Error('Invalid learning event data');
+  if (data.recommendationId !== undefined && !validId(data.recommendationId)) throw new Error('Invalid learning event data');
+  if (data.stage !== undefined && ![...LESSON_STAGES, ...TRAINING_STAGES].includes(data.stage as string)) throw new Error('Invalid learning event data');
   if (data.correct !== undefined && typeof data.correct !== 'boolean') throw new Error('Invalid learning event data');
+  if (data.phase !== undefined && !PRACTICUM_PHASES.includes(data.phase as string)) throw new Error('Invalid learning event data');
+  if (data.choiceId !== undefined && !validId(data.choiceId)) throw new Error('Invalid learning event data');
+  if (data.passed !== undefined && typeof data.passed !== 'boolean') throw new Error('Invalid learning event data');
+  if (data.passedCount !== undefined && (!Number.isInteger(data.passedCount) || (data.passedCount as number) < 0 || (data.passedCount as number) > 100)) throw new Error('Invalid learning event data');
+  if (data.totalCount !== undefined && (!Number.isInteger(data.totalCount) || (data.totalCount as number) < 1 || (data.totalCount as number) > 100)) throw new Error('Invalid learning event data');
+  if (data.reflectionTag !== undefined && !REFLECTION_TAGS.includes(data.reflectionTag as string)) throw new Error('Invalid learning event data');
+  if (data.curriculumVersion !== undefined && (typeof data.curriculumVersion !== 'string' || !/^\d+\.\d+\.\d+$/.test(data.curriculumVersion))) throw new Error('Invalid learning event data');
+  if (data.diagnosticStep !== undefined && !DIAGNOSTIC_STEPS.includes(data.diagnosticStep as string)) throw new Error('Invalid learning event data');
   return data as LearningEventData;
 }
 
@@ -110,6 +132,23 @@ function parseLearningEvent(value: unknown): LearningEvent {
   if (kind === 'lesson-checkpoint-passed' && (data.stage !== 'predict' || data.correct !== true)) throw new Error('Invalid learning event semantics');
   if (kind === 'lesson-completed' && (data.stage !== 'complete' || data.correct !== true)) throw new Error('Invalid learning event semantics');
   if (kind === 'lesson-transfer-started' && data.stage !== 'transfer') throw new Error('Invalid learning event semantics');
+  if (kind === 'lesson-transfer-passed' && (!validId(event.problemId) || !validId(event.attemptId) || data.stage !== 'transfer' || data.correct !== true || data.assisted !== false)) throw new Error('Invalid learning event semantics');
+  if (kind === 'lesson-handoff-feedback' && (!validId(data.recommendationId) || !['helpful', 'unclear'].includes(data.choiceId ?? ''))) throw new Error('Invalid learning event semantics');
+  if (kind.startsWith('training-') && !validId(data.lessonId)) throw new Error('Invalid learning event semantics');
+  if (kind === 'training-session-started' && data.stage !== 'explain') throw new Error('Invalid learning event semantics');
+  if (kind === 'training-stage-completed' && (!TRAINING_STAGES.includes(data.stage as string) || data.correct !== true)) throw new Error('Invalid learning event semantics');
+  if (kind === 'training-session-completed' && data.stage !== 'transfer') throw new Error('Invalid learning event semantics');
+  if (kind.startsWith('first-minute-') && !validId(data.lessonId)) throw new Error('Invalid learning event semantics');
+  if (kind === 'bridge-diagnostic-started' && !data.curriculumVersion) throw new Error('Invalid learning event semantics');
+  if (kind === 'bridge-diagnostic-step-recorded' && (!data.curriculumVersion || !DIAGNOSTIC_STEPS.includes(data.diagnosticStep as string) || typeof data.correct !== 'boolean')) throw new Error('Invalid learning event semantics');
+  if (kind === 'mentor-revision-verified' && (!validId(event.problemId) || data.outcome !== 'passed')) throw new Error('Invalid learning event semantics');
+  if (kind.startsWith('practicum-') && !validId(event.problemId)) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-started' && data.phase !== 'understanding') throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-phase-completed' && (!['diagnosis', 'planning'].includes(data.phase as string) || !validId(data.choiceId))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-hint-used' && (!PRACTICUM_PHASES.includes(data.phase as string) || ![1, 2, 3, 4].includes(data.hintLevel as number))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-tested' && (data.phase !== 'verification' || typeof data.passed !== 'boolean' || !Number.isInteger(data.passedCount) || !Number.isInteger(data.totalCount) || (data.passedCount as number) > (data.totalCount as number))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-reflected' && (data.phase !== 'reflection' || !REFLECTION_TAGS.includes(data.reflectionTag as string))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-completed' && (data.phase !== 'completed' || data.passed !== true)) throw new Error('Invalid learning event semantics');
   return { ...event, data } as LearningEvent;
 }
 
@@ -141,7 +180,7 @@ export function parseLearnerMemory(value: unknown): LearnerMemory {
   const profile = parseProfile(memory.profile);
   const events = memory.events.map(parseLearningEvent);
   if (events.some((event) => event.learnerId !== profile.learnerId)) throw new Error('Invalid learner event owner');
-  return { version: 1, profile, events: events.slice(-MAX_LEARNING_EVENTS) };
+  return { version: 1, profile, events: retainLearningEvents(events) };
 }
 
 export function loadLearnerMemory(storage: Pick<Storage, 'getItem' | 'setItem'>): LearnerMemory {
@@ -178,10 +217,20 @@ export function appendLearningEvent(memory: LearnerMemory, event: LearningEvent)
   const parsed = parseLearningEvent(event);
   if (parsed.learnerId !== memory.profile.learnerId) throw new Error('Invalid learner event owner');
   if (memory.events.some((item) => item.id === parsed.id)) return memory;
-  return { ...memory, events: [...memory.events, parsed].slice(-MAX_LEARNING_EVENTS) };
+  return { ...memory, events: retainLearningEvents([...memory.events, parsed]) };
 }
 
 export function recordLearningSignal(memory: LearnerMemory, signal: LearningSignal, now = new Date(), id = eventId()): LearnerMemory {
+  if (signal.kind === 'first-minute-first-run' && memory.events.some((event) => event.kind === 'first-minute-first-run')) return memory;
+  if (signal.kind === 'lesson-started' && signal.data.lessonId
+    && memory.events.some((event) => event.kind === 'lesson-started' && event.data.lessonId === signal.data.lessonId)) return memory;
+  if (signal.kind === 'lesson-handoff-feedback' && signal.data.recommendationId
+    && (signal.data.choiceId === 'helpful' || signal.data.choiceId === 'unclear')) {
+    const latest = memory.events
+      .filter((event) => event.kind === 'lesson-handoff-feedback' && event.data.recommendationId === signal.data.recommendationId)
+      .sort((left, right) => Date.parse(right.createdAt) - Date.parse(left.createdAt) || right.id.localeCompare(left.id))[0];
+    if (latest?.data.choiceId === signal.data.choiceId) return memory;
+  }
   return appendLearningEvent(memory, {
     id, learnerId: memory.profile.learnerId, kind: signal.kind, data: signal.data, createdAt: now.toISOString(),
     ...(signal.problemId ? { problemId: signal.problemId } : {}),

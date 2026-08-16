@@ -1,0 +1,73 @@
+{
+  "version": 2,
+  "name": "mentor-diagnosis-seed-v2",
+  "thresholds": {
+    "lineLocalizationAccuracy": 0.8,
+    "misconceptionAccuracy": 0.7,
+    "evidenceSufficiency": 0.8,
+    "minimalHintEffectiveness": 0.4,
+    "answerLeakageRate": 0,
+    "falseConclusionRate": 0.02
+  },
+  "releaseGate": {
+    "minimumEligibleRealCases": 100,
+    "requiredCoverage": {
+      "languages": ["javascript", "python", "java", "cpp"],
+      "learnerBands": ["beginner", "intermediate", "advanced"],
+      "errorFamilies": ["boundary", "input", "numeric", "edge-case"],
+      "verdicts": ["wrong-answer", "runtime-error", "compile-error", "timeout"]
+    }
+  },
+  "cases": [
+    {
+      "id": "seed-js-boundary-01",
+      "language": "javascript",
+      "learnerBand": "beginner",
+      "attempt": { "id": "seed-attempt-js-01", "sourceCode": "for (let i = 0; i <= values.length; i++) total += values[i];", "sourceHash": "8a65b5980114baf3fba3f33290bd75035e7817226d1583c237c2eb046d16e446" },
+      "execution": { "verdict": "wrong-answer", "refs": ["judge:public:case-1", "code:line:1"] },
+      "provenance": { "origin": "synthetic-mutation", "sourceUrl": "local://mentor-v1/seed-js-boundary-01", "license": "CC0-1.0" },
+      "adjudication": { "status": "teacher-adjudicated", "reviewerId": "seed-maintainer", "completedAt": "2026-08-12T00:00:00.000Z" },
+      "expected": { "errorFamily": "boundary", "misconception": "off-by-one", "lines": [1], "hintIntent": "predict-boundary" },
+      "prohibitedFragments": ["i < values.length"]
+    },
+    {
+      "id": "seed-py-input-01",
+      "language": "python",
+      "learnerBand": "intermediate",
+      "attempt": { "id": "seed-attempt-py-01", "sourceCode": "parts = input.split()\nprint(len(parts))", "sourceHash": "4ce5e5a6cceb7087379c4dc2d9fc991b9f116f029fdfa6548c08406a2c249f10" },
+      "execution": { "verdict": "runtime-error", "refs": ["stderr:line:1", "code:line:1"] },
+      "provenance": { "origin": "synthetic-mutation", "sourceUrl": "local://mentor-v1/seed-py-input-01", "license": "CC0-1.0" },
+      "adjudication": { "status": "teacher-adjudicated", "reviewerId": "seed-maintainer", "completedAt": "2026-08-12T00:00:00.000Z" },
+      "expected": { "errorFamily": "input", "misconception": "input-parsing", "lines": [1], "hintIntent": "inspect-input-api" },
+      "prohibitedFragments": ["input().split()"]
+    },
+    {
+      "id": "seed-java-overflow-01",
+      "language": "java",
+      "learnerBand": "advanced",
+      "attempt": { "id": "seed-attempt-java-01", "sourceCode": "int total = 0;\nfor (int value : values) total += value;", "sourceHash": "02c28d5fadc19a09a33dd38e80089541ff5715da6fba94d34f313e230a0412f5" },
+      "execution": { "verdict": "compile-error", "refs": ["stderr:integer-overflow", "code:line:2"] },
+      "provenance": { "origin": "synthetic-mutation", "sourceUrl": "local://mentor-v1/seed-java-overflow-01", "license": "CC0-1.0" },
+      "adjudication": { "status": "teacher-adjudicated", "reviewerId": "seed-maintainer", "completedAt": "2026-08-12T00:00:00.000Z" },
+      "expected": { "errorFamily": "numeric", "misconception": "numeric-overflow", "lines": [1, 2], "hintIntent": "estimate-range" },
+      "prohibitedFragments": ["long total"]
+    },
+    {
+      "id": "seed-cpp-empty-01",
+      "language": "cpp",
+      "learnerBand": "beginner",
+      "attempt": { "id": "seed-attempt-cpp-01", "sourceCode": "int best = values[0];\nfor (int value : values) best = std::max(best, value);", "sourceHash": "2bef0b13d7b185df669bf3307173c20eea0a933ab6d5c1173063b49794f6df89" },
+      "execution": { "verdict": "timeout", "refs": ["runtime:empty-access", "failed-input:empty"] },
+      "provenance": { "origin": "synthetic-mutation", "sourceUrl": "local://mentor-v1/seed-cpp-empty-01", "license": "CC0-1.0" },
+      "adjudication": { "status": "teacher-adjudicated", "reviewerId": "seed-maintainer", "completedAt": "2026-08-12T00:00:00.000Z" },
+      "expected": { "errorFamily": "edge-case", "misconception": "missing-empty-case", "lines": [1], "hintIntent": "predict-empty-state" },
+      "prohibitedFragments": ["if (values.empty())"]
+    }
+  ],
+  "baselinePredictions": [
+    { "caseId": "seed-js-boundary-01", "misconception": "off-by-one", "lines": [1], "hintIntent": "predict-boundary", "hint": "预测 i 等于数组长度时会读取哪个位置。", "conclusion": { "confidence": "high", "evidenceRefs": ["judge:public:case-1"] } },
+    { "caseId": "seed-py-input-01", "misconception": "input-parsing", "lines": [1], "hintIntent": "inspect-input-api", "hint": "第 1 行得到的是函数对象还是输入文本？", "conclusion": { "confidence": "high", "evidenceRefs": ["stderr:line:1"] } },
+    { "caseId": "seed-java-overflow-01", "misconception": "numeric-overflow", "lines": [1, 2], "hintIntent": "estimate-range", "hint": "先估算累计值的范围，再比较当前整数类型。", "conclusion": { "confidence": "medium", "evidenceRefs": ["stderr:integer-overflow"] } },
+    { "caseId": "seed-cpp-empty-01", "misconception": "missing-empty-case", "lines": [1], "hintIntent": "predict-empty-state", "hint": "空输入时第 1 行会访问什么？", "conclusion": { "confidence": "high", "evidenceRefs": ["runtime:empty-access"] } }
+  ]
+}

@@ -2,20 +2,23 @@ import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { dirname } from 'node:path';
 import type { LearnerProfile, LearningEvent } from './learning-validation.js';
+import { retainLearningEvents } from './learning-retention.js';
 
-const MAX_EVENTS = 500;
 const MAX_EVENT_IDS = 5_000;
 
 type LearnerRecord = { profile?: LearnerProfile; events: LearningEvent[]; eventIds: string[]; eventReceipts: Record<string, LearningEvent> };
 type StoreFile = { version: 1; learners: Record<string, LearnerRecord> };
 
 export type LearningStore = {
+  readonly mode: LearningStoreMode;
   getProfile(learnerId: string): Promise<LearnerProfile | undefined>;
   putProfile(profile: LearnerProfile): Promise<LearnerProfile>;
   listEvents(learnerId: string): Promise<LearningEvent[]>;
   appendEvent(event: LearningEvent): Promise<{ event: LearningEvent; created: boolean }>;
   appendEvents(events: LearningEvent[]): Promise<{ accepted: number; created: number }>;
 };
+
+export type LearningStoreMode = 'memory' | 'file-local' | 'postgres';
 
 function emptyState(): StoreFile {
   return { version: 1, learners: Object.create(null) as Record<string, LearnerRecord> };
@@ -29,14 +32,14 @@ function safeState(value: unknown): StoreFile {
   for (const [learnerId, raw] of Object.entries(rawLearners)) {
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) continue;
     const candidate = raw as Partial<LearnerRecord>;
-    const events = Array.isArray(candidate.events) ? candidate.events.slice(-MAX_EVENTS) : [];
-    const eventIds = Array.isArray(candidate.eventIds)
-      ? candidate.eventIds.filter((id): id is string => typeof id === 'string').slice(-MAX_EVENT_IDS)
-      : events.map((event) => event.id).slice(-MAX_EVENT_IDS);
     const rawReceipts = candidate.eventReceipts && typeof candidate.eventReceipts === 'object' && !Array.isArray(candidate.eventReceipts)
       ? candidate.eventReceipts : {};
     const eventReceipts = Object.create(null) as Record<string, LearningEvent>;
     for (const [id, event] of Object.entries(rawReceipts).slice(-MAX_EVENT_IDS)) eventReceipts[id] = event;
+    const events = retainLearningEvents([...(Array.isArray(candidate.events) ? candidate.events : []), ...Object.values(eventReceipts)]);
+    const eventIds = Array.isArray(candidate.eventIds)
+      ? candidate.eventIds.filter((id): id is string => typeof id === 'string').slice(-MAX_EVENT_IDS)
+      : Object.keys(eventReceipts).slice(-MAX_EVENT_IDS);
     for (const event of events) if (!eventReceipts[event.id]) eventReceipts[event.id] = event;
     result.learners[learnerId] = { ...(candidate.profile ? { profile: candidate.profile } : {}), events, eventIds, eventReceipts };
   }
@@ -118,9 +121,7 @@ export function createLearningStore(options: { filePath?: string } = {}): Learni
       additions.push(event);
     }
     if (additions.length) {
-      learner.events = [...learner.events, ...additions]
-        .sort((left, right) => Date.parse(left.createdAt) - Date.parse(right.createdAt))
-        .slice(-MAX_EVENTS);
+      learner.events = retainLearningEvents([...learner.events, ...additions]);
       learner.eventIds = [...learner.eventIds, ...additions.map((event) => event.id)].slice(-MAX_EVENT_IDS);
       for (const event of additions) learner.eventReceipts[event.id] = event;
       const receiptEntries = Object.entries(learner.eventReceipts);
@@ -134,6 +135,7 @@ export function createLearningStore(options: { filePath?: string } = {}): Learni
   }
 
   return {
+    mode: options.filePath ? 'file-local' : 'memory',
     getProfile: (learnerId) => read(() => ownRecord(learnerId)?.profile),
     putProfile: (profile) => mutate(() => {
       const learner = recordFor(profile.learnerId);

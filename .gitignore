@@ -5,6 +5,10 @@ archive/
 content/problems/
 .env
 .superpowers/
+.venv/
+tmp/
+artifacts/*.log
+*.inspect.ndjson
 
 /ABCD卷/
 /2025 E卷-2025A卷/

@@ -25,14 +25,14 @@ Invoke-RestMethod http://127.0.0.1:8787/healthz
 $env:VITE_LEARNING_API_URL='http://127.0.0.1:8787'
 ```
 
-网关会把学习目标和最多 500 条去重学习事件保存在 `LEARNING_DATA_FILE`。Compose 默认把 `/data/learning.json` 放入独立持久卷；不配置该变量时使用进程内存仓储，适合测试但不适合正式运行。
+网关会把学习目标和最多 500 条去重学习事件保存在 `LEARNING_DATA_FILE`：最多保留 200 条纵向里程碑证据，并保证至少保留最近 300 条事件。激活、课程完成、训练进度、迁移验证和项目完成等长期事实不会被普通提示事件直接挤出；另保留 5,000 条事件回放收据，用于幂等校验和从旧文件中恢复仍有原始证据的里程碑。Compose 默认把 `/data/learning.json` 放入独立持久卷；不配置该变量时使用进程内存仓储，适合测试但不适合正式运行。PostgreSQL 模式仍保留完整事件历史，是登录用户的权威恢复来源。
 
 单一动态 Mentor Agent 另外使用 `MENTOR_DATA_FILE` 保存会话与学习者孪生。启用 DeepSeek 工具调用：
 
 ```dotenv
 DEEPSEEK_API_KEY=replace-with-server-side-key
 DEEPSEEK_API_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-v4-flash
+DEEPSEEK_MODEL=deepseek-chat
 MENTOR_DATA_FILE=/data/mentor.json
 MENTOR_PG_HOST=db
 MENTOR_PG_PORT=5432

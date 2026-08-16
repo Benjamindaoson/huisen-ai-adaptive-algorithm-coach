@@ -1,4 +1,5 @@
 import { OD_SKILLS, type SkillId } from './skills';
+import { STARTER_ALGORITHM_LESSONS } from './starter-algorithm-curriculum';
 
 export type LessonChapter = '先会让程序工作' | '学会拆解问题' | '掌握常用算法';
 
@@ -207,7 +208,7 @@ export const FOUNDATION_LESSONS: FoundationLesson[] = [
 ];
 
 export function getFoundationLesson(id: string): FoundationLesson | undefined {
-  return FOUNDATION_LESSONS.find((lesson) => lesson.id === id);
+  return [...FOUNDATION_LESSONS, ...STARTER_ALGORITHM_LESSONS].find((lesson) => lesson.id === id);
 }
 
 export function validateFoundationCurriculum(): string[] {

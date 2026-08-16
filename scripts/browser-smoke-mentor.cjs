@@ -30,7 +30,7 @@ const screenshotPath = path.resolve(process.cwd(), 'artifacts', 'mentor-browser-
   await page.goto(`${baseUrl}/#/problem/od-71a5033ee94c`, { waitUntil: 'domcontentloaded', timeout: 30_000 });
   await page.getByText('Mentor', { exact: true }).waitFor({ timeout: 15_000 });
   process.stdout.write('mentor-mounted\n');
-  try { await page.getByText(/DeepSeek · deepseek-v4-flash/).waitFor({ timeout: 60_000 }); }
+  try { await page.getByText('DeepSeek 动态规划', { exact: true }).first().waitFor({ timeout: 60_000 }); }
   catch (error) {
     process.stderr.write(`${JSON.stringify({ mentorNetwork, consoleErrors, body: (await page.locator('body').innerText()).slice(-2_000) })}\n`);
     throw error;

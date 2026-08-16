@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "name": "mentor-diagnosis-seed-v1",
+  "thresholds": {
+    "lineAccuracy": 0.8,
+    "misconceptionAccuracy": 0.7,
+    "unsupportedHighConfidenceRate": 0.02,
+    "minimalHintUsefulness": 0.4,
+    "answerLeakageRate": 0
+  },
+  "cases": [
+    { "id": "js-off-by-one-01", "language": "javascript", "sourceCode": "for (let i = 0; i <= values.length; i++) {\n  total += values[i];\n}", "evidence": { "outcome": "wrong-answer", "refs": ["judge:public:case-1", "code:line:1"] }, "expected": { "misconception": "off-by-one", "lines": [1, 2], "hintIntent": "predict-boundary" }, "prohibitedFragments": ["i < values.length"] },
+    { "id": "py-input-api-01", "language": "python", "sourceCode": "parts = input.split()\nprint(len(parts))", "evidence": { "outcome": "runtime-error", "refs": ["stderr:line:1", "code:line:1"] }, "expected": { "misconception": "input-parsing", "lines": [1], "hintIntent": "inspect-input-api" }, "prohibitedFragments": ["input().split()"] },
+    { "id": "java-tokenizer-01", "language": "java", "sourceCode": "String line = br.readLine();\nString[] parts = line.split(\";\");", "evidence": { "outcome": "wrong-answer", "refs": ["judge:public:case-2", "failed-input:line:1"] }, "expected": { "misconception": "input-parsing", "lines": [2], "hintIntent": "compare-delimiter" }, "prohibitedFragments": ["split(\",\")"] },
+    { "id": "cpp-empty-01", "language": "cpp", "sourceCode": "int best = a[0];\nfor (int x : a) best = max(best, x);", "evidence": { "outcome": "runtime-error", "refs": ["stderr:segmentation-fault", "failed-input:empty"] }, "expected": { "misconception": "missing-empty-case", "lines": [1], "hintIntent": "predict-empty-state" }, "prohibitedFragments": ["if (a.empty())"] },
+    { "id": "py-state-reset-01", "language": "python", "sourceCode": "total = 0\nfor group in groups:\n    for value in group:\n        total += value\n    answers.append(total)", "evidence": { "outcome": "wrong-answer", "refs": ["judge:public:case-3", "runtime:group-2"] }, "expected": { "misconception": "state-reset", "lines": [1, 5], "hintIntent": "trace-second-group" }, "prohibitedFragments": ["total = 0\nfor group"] },
+    { "id": "js-compare-01", "language": "javascript", "sourceCode": "items.sort();\nconsole.log(items.join(' '));", "evidence": { "outcome": "wrong-answer", "refs": ["judge:public:case-4", "failed-output:numeric-order"] }, "expected": { "misconception": "comparison-semantics", "lines": [1], "hintIntent": "predict-sort-order" }, "prohibitedFragments": ["sort((a, b) => a - b)"] },
+    { "id": "java-overflow-01", "language": "java", "sourceCode": "int total = 0;\nfor (int value : values) total += value;\nSystem.out.println(total);", "evidence": { "outcome": "wrong-answer", "refs": ["judge:public:large-values", "failed-output:overflow"] }, "expected": { "misconception": "numeric-overflow", "lines": [1, 2], "hintIntent": "estimate-range" }, "prohibitedFragments": ["long total"] },
+    { "id": "cpp-binary-boundary-01", "language": "cpp", "sourceCode": "while (left < right) {\n  int mid = (left + right) / 2;\n  if (ok(mid)) left = mid;\n  else right = mid - 1;\n}", "evidence": { "outcome": "timeout", "refs": ["judge:public:timeout", "runtime:left-right-stable"] }, "expected": { "misconception": "off-by-one", "lines": [1, 3], "hintIntent": "trace-progress" }, "prohibitedFragments": ["left = mid + 1"] },
+    { "id": "py-complexity-01", "language": "python", "sourceCode": "for x in values:\n    if x in values:\n        answer += 1", "evidence": { "outcome": "timeout", "refs": ["judge:public:timeout", "constraint:n-200000"] }, "expected": { "misconception": "complexity", "lines": [1, 2], "hintIntent": "count-operations" }, "prohibitedFragments": ["set(values)"] },
+    { "id": "js-output-format-01", "language": "javascript", "sourceCode": "console.log(answer.join(','));", "evidence": { "outcome": "wrong-answer", "refs": ["failed-output:whitespace", "problem:output-format"] }, "expected": { "misconception": "output-format", "lines": [1], "hintIntent": "compare-output-bytes" }, "prohibitedFragments": ["join(' ')"] },
+    { "id": "java-uninitialized-01", "language": "java", "sourceCode": "int answer;\nif (flag) answer = 1;\nSystem.out.println(answer);", "evidence": { "outcome": "compile-error", "refs": ["stderr:variable-might-not-have-been-initialized", "code:line:3"] }, "expected": { "misconception": "state-initialization", "lines": [1, 3], "hintIntent": "trace-false-branch" }, "prohibitedFragments": ["int answer = 0"] },
+    { "id": "cpp-unknown-01", "language": "cpp", "sourceCode": "cout << solve(values) << '\\n';", "evidence": { "outcome": "wrong-answer", "refs": ["judge:public:case-5"] }, "expected": { "misconception": "unknown", "lines": [], "hintIntent": "request-more-evidence" }, "prohibitedFragments": [] }
+  ]
+}

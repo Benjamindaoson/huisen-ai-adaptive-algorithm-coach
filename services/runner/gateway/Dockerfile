@@ -5,6 +5,8 @@ COPY services/runner/gateway/package.json services/runner/gateway/package-lock.j
 RUN npm ci
 COPY services/runner/gateway/tsconfig.json ./
 COPY services/runner/gateway/src ./src
+COPY services/runner/gateway/migrations ./migrations
+COPY contracts/learning-event-contract.ts /app/contracts/learning-event-contract.ts
 COPY content/mentor-index.json /app/content/mentor-index.json
 COPY content/verified-public-cases.json /app/content/verified-public-cases.json
 COPY content/problems /app/content/problems

@@ -72,12 +72,17 @@ export function analyzeSemantics(input: { parsed: ParsedProgramEvidence; report:
   const knownNames = new Set(functions.map((item) => item.name));
   const callGraph: CallGraphEdge[] = [];
   const pathRisks: SemanticPathRisk[] = [];
+  const externalBareCalls = new Set(input.parsed.language === 'javascript'
+    ? ['require', 'parseInt', 'parseFloat', 'Number', 'String', 'Boolean', 'BigInt', 'setTimeout', 'setInterval']
+    : input.parsed.language === 'python'
+      ? ['print', 'range', 'len', 'input', 'enumerate', 'zip', 'map', 'filter', 'sum', 'min', 'max', 'sorted', 'int', 'str', 'list', 'set', 'dict', 'abs', 'all', 'any', 'open']
+      : ['main', 'print', 'println', 'log', 'readLine']);
   for (const node of input.parsed.nodes.filter((item) => item.kind === 'call')) {
     const callee = node.calleeName ?? calleeName(node.text);
     if (!callee) continue;
     const caller = nearestFunction(node, byId, names);
     callGraph.push({ caller, callee, line: node.range.startLine, evidenceRef: node.id });
-    if (!knownNames.has(callee) && !['main', 'print', 'println', 'log', 'readLine', 'range', 'len', 'input'].includes(callee)) {
+    if (node.callTarget !== 'member' && !knownNames.has(callee) && !externalBareCalls.has(callee)) {
       pathRisks.push({ id: `risk:unresolved-call:${callee}:${node.range.startLine}`, kind: 'unresolved-call', message: `调用 ${callee} 未解析到当前文件中的函数定义。`, status: 'unverified', evidenceRefs: [node.id] });
     }
   }

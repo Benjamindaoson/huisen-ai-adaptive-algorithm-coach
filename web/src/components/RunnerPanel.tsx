@@ -10,6 +10,9 @@ import { CoachPanel } from './CoachPanel';
 import type { HintLevel } from '../lib/coach';
 import { SubmissionFeedback } from './SubmissionFeedback';
 import { MentorTimeline } from './MentorTimeline';
+import type { MentorOSCheckpoint } from '../lib/mentor-os-state';
+import type { DurableSubmission } from '../lib/platform-client';
+import type { MentorTransferTask } from '../lib/mentor-client';
 
 type Props = {
   problem: ProblemRecord;
@@ -22,11 +25,18 @@ type Props = {
   onReference: () => void;
   onIntervention?: (kind: 'hint-requested' | 'hint-received', level: HintLevel, attemptId: string) => void;
   learnerId?: string;
-  remediation?: { lessonId: string; title: string; reason: string } | null;
+  remediation?: { lessonId: string; title: string; reason: string; confidence: 'low' | 'medium' | 'high'; authority: string } | null;
   onLearn?: (lessonId: string) => void;
+  assistanceAllowed?: boolean;
+  mentorOS?: { runId: string; cursor: number };
+  mentorOSRequired?: boolean;
+  onMentorOSCheckpoint?: (checkpoint: MentorOSCheckpoint) => void;
+  onOpenTransfer?: (task: MentorTransferTask) => void;
+  onMentorRevisionVerified?: (attemptId: string) => void;
+  onHiddenSubmit?: (input:{problemId:string;language:ProblemLanguage;sourceCode:string;idempotencyKey:string})=>Promise<DurableSubmission>;
 };
 
-type VisibleResult = { mode: 'run'; value: RunResult } | { mode: 'sample-submit'; value: SampleSubmissionResult };
+type VisibleResult = { mode: 'run'; value: RunResult } | { mode: 'sample-submit'; value: SampleSubmissionResult } | {mode:'hidden-submit';value:DurableSubmission};
 type ActivePanel = 'testcase' | 'result' | 'history' | 'coach';
 
 function attemptId(): string {
@@ -49,10 +59,14 @@ function boundedOutput(value: string): string {
   return value.slice(0, 32_000);
 }
 
-export function RunnerPanel({ problem, language, sourceCode, sampleCases, attempts, mastery, onAttempt, onReference, onIntervention, learnerId, remediation, onLearn }: Props) {
+function unavailableTitle(result: RunResult): string {
+  return result.unavailableReason === 'not-configured' ? '当前版本未连接代码运行服务' : '运行服务暂时无法连接';
+}
+
+export function RunnerPanel({ problem, language, sourceCode, sampleCases, attempts, mastery, onAttempt, onReference, onIntervention, learnerId, remediation, onLearn, assistanceAllowed = true, mentorOS, mentorOSRequired = false, onMentorOSCheckpoint, onOpenTransfer, onMentorRevisionVerified, onHiddenSubmit }: Props) {
   const [stdin, setStdin] = useState(sampleCases[0]?.stdin ?? '');
   const [result, setResult] = useState<VisibleResult | null>(null);
-  const [busyMode, setBusyMode] = useState<'run' | 'sample-submit' | null>(null);
+  const [busyMode, setBusyMode] = useState<'run' | 'sample-submit' | 'hidden-submit' | null>(null);
   const [activePanel, setActivePanel] = useState<ActivePanel>('testcase');
   const [selectedAttempt, setSelectedAttempt] = useState<PracticeAttempt | undefined>();
   const configuredRunner = import.meta.env.VITE_RUNNER_URL as string | undefined;
@@ -132,6 +146,15 @@ export function RunnerPanel({ problem, language, sourceCode, sampleCases, attemp
     }
   }
 
+  async function submitHidden() {
+    if(!onHiddenSubmit)return;setBusyMode('hidden-submit');
+    try{const idempotencyKey=`hidden-${attemptId()}`;const submission=await onHiddenSubmit({problemId:problem.id,language,sourceCode,idempotencyKey});setResult({mode:'hidden-submit',value:submission});setActivePanel('result');
+      const outcome:AttemptOutcome=submission.status==='passed'?'passed':submission.status==='failed'?'wrong-answer':submission.status==='error'?'unavailable':'unavailable';
+      const practiceAttempt:PracticeAttempt={id:submission.id,problemId:problem.id,language,mode:'sample-submit',codeSnapshot:sourceCode,outcome,summary:`隐藏判题 ${submission.passedCount}/${submission.totalCount} · ${submission.status}`,passedCount:submission.passedCount,totalCount:submission.totalCount,createdAt:new Date(submission.completedAt??submission.submittedAt).toISOString(),evidence:{...(submission.timeMs!==undefined?{timeMs:submission.timeMs}:{}),...(submission.error?{stderr:boundedOutput(submission.error)}:{})}};
+      setSelectedAttempt(practiceAttempt);onAttempt(practiceAttempt);recordTelemetry(window.localStorage,{name:'practice-submit',problemId:problem.id,language,outcome:practiceAttempt.outcome,durationMs:submission.timeMs});
+    }finally{setBusyMode(null);}
+  }
+
   const runnable = hasRunnableSource(sourceCode);
   const recentAttempts = [...attempts].reverse().slice(0, 8);
   const coachAttempt = selectedAttempt ?? recentAttempts.find((attempt) => !['passed', 'executed', 'unavailable'].includes(attempt.outcome)) ?? recentAttempts[0];
@@ -143,20 +166,21 @@ export function RunnerPanel({ problem, language, sourceCode, sampleCases, attemp
           <button id="runner-title" type="button" role="tab" aria-selected={activePanel === 'testcase'} className={activePanel === 'testcase' ? 'selected' : ''} onClick={() => setActivePanel('testcase')}>测试用例</button>
           <button type="button" role="tab" aria-selected={activePanel === 'result'} className={activePanel === 'result' ? 'selected' : ''} onClick={() => setActivePanel('result')}>执行结果{result && <i />}</button>
           <button type="button" role="tab" aria-selected={activePanel === 'history'} className={activePanel === 'history' ? 'selected' : ''} onClick={() => setActivePanel('history')}>尝试记录{attempts.length ? ` ${attempts.length}` : ''}</button>
-          {!configuredAgent && <button type="button" role="tab" aria-selected={activePanel === 'coach'} className={activePanel === 'coach' ? 'selected' : ''} onClick={() => setActivePanel('coach')}>AI 教练</button>}
+          {assistanceAllowed && !configuredAgent && <button type="button" role="tab" aria-selected={activePanel === 'coach'} className={activePanel === 'coach' ? 'selected' : ''} onClick={() => setActivePanel('coach')}>AI 教练</button>}
         </div>
         <div className="runner-actions">
           <button type="button" className="secondary-button" disabled={!runnable || busyMode !== null} onClick={run}>{busyMode === 'run' ? '运行中…' : '▶ 运行'}</button>
           <button type="button" className="primary-button" title={sampleCases.length ? '执行所有可判定的公开样例' : '当前资料没有可判定的公开样例'} disabled={!runnable || busyMode !== null || sampleCases.length === 0} onClick={submitSamples}>{busyMode === 'sample-submit' ? '判题中…' : '样例提交'}</button>
+          {onHiddenSubmit?<button type="button" className="primary-button" disabled={!runnable||busyMode!==null} onClick={submitHidden}>{busyMode==='hidden-submit'?'隐藏判题中…':'隐藏提交'}</button>:<button type="button" className="secondary-button" disabled title="需要登录并连接私有判题服务">登录后可用隐藏判题</button>}
         </div>
       </div>
 
-      {remediation && <aside className="learning-remediation-card" aria-label="补一节再回来">
-        <span>学习支持 · 未确认具体错因</span><div><strong>补一节：{remediation.title}</strong><p>{remediation.reason}</p></div>
+      {assistanceAllowed && remediation && <aside className="learning-remediation-card" aria-label="补一节再回来">
+        <span>{remediation.authority === 'skill-route' ? '学习路径建议 · 尚未确认错因' : `提交证据诊断 · ${remediation.confidence === 'high' ? '高置信' : '待验证'}`}</span><div><strong>补一节：{remediation.title}</strong><p>{remediation.reason}</p></div>
         <button type="button" onClick={() => onLearn?.(remediation.lessonId)}>先学 15 分钟 →</button>
       </aside>}
 
-      {configuredAgent && learnerId && <MentorTimeline learnerId={learnerId} agentUrl={configuredAgent} problem={problem} attempt={coachAttempt} sampleCases={sampleCases} />}
+      {assistanceAllowed && configuredAgent && learnerId && <MentorTimeline learnerId={learnerId} agentUrl={configuredAgent} problem={problem} attempt={coachAttempt} currentSourceCode={sourceCode} sampleCases={sampleCases} mentorOS={mentorOS} mentorOSRequired={mentorOSRequired} onMentorOSCheckpoint={onMentorOSCheckpoint} onOpenTransfer={onOpenTransfer} onRevisionVerified={onMentorRevisionVerified} />}
 
       {activePanel === 'testcase' && <div className="testcase-panel" role="tabpanel">
         <label className="field-label">自定义标准输入
@@ -169,19 +193,29 @@ export function RunnerPanel({ problem, language, sourceCode, sampleCases, attemp
       {activePanel === 'result' && <div className="result-panel" role="tabpanel" aria-live="polite">
         {!result && <p className="result-placeholder">尚未执行代码。运行自定义输入，或提交全部公开样例。</p>}
         {result?.mode === 'run' && <div className={`run-result ${result.value.kind}`}>
-          <strong>{runTitle(result.value)}</strong>
-          {result.value.stdout && <><span className="output-label">标准输出</span><pre>{result.value.stdout}</pre></>}
-          {result.value.stderr && <pre className="stderr">{result.value.stderr}</pre>}
-          <small>本次仅运行自定义输入，不代表题目通过。</small>
+          {result.value.kind === 'unavailable' ? <div className="runner-recovery">
+            <strong>{unavailableTitle(result.value)}</strong>
+            <p>代码已保留，没有判定你的算法对错。</p>
+            {result.value.unavailableReason === 'not-configured'
+              ? <small>此部署尚未配置私有运行服务，请使用已连接运行服务的版本。</small>
+              : <button type="button" className="secondary-button" disabled={busyMode !== null} onClick={run}>{busyMode === 'run' ? '重新连接中…' : '重新连接并运行'}</button>}
+            {result.value.stderr && <details><summary>连接详情</summary><pre className="stderr">{result.value.stderr}</pre></details>}
+          </div> : <>
+            <strong>{runTitle(result.value)}</strong>
+            {result.value.stdout && <><span className="output-label">标准输出</span><pre>{result.value.stdout}</pre></>}
+            {result.value.stderr && <pre className="stderr">{result.value.stderr}</pre>}
+            <small>本次仅运行自定义输入，不代表题目通过。</small>
+          </>}
         </div>}
-        {result?.mode === 'sample-submit' && coachAttempt && <SubmissionFeedback submission={result.value} attempt={coachAttempt} problem={problem} mastery={mastery} onRetry={() => setActivePanel('testcase')} onHint={() => setActivePanel(configuredAgent ? 'result' : 'coach')} onReference={onReference} />}
+        {result?.mode === 'sample-submit' && coachAttempt && <SubmissionFeedback submission={result.value} attempt={coachAttempt} problem={problem} mastery={mastery} onRetry={() => setActivePanel('testcase')} onHint={() => setActivePanel(configuredAgent ? 'result' : 'coach')} onReference={onReference} assistanceAllowed={assistanceAllowed} />}
+        {result?.mode==='hidden-submit'&&<div className={`run-result ${result.value.status}`}><strong>{result.value.status==='passed'?'隐藏用例通过':result.value.status==='failed'?'隐藏用例未全部通过':result.value.status==='error'?'判题服务未完成':'仍在判题队列'}</strong><p>{result.value.passedCount}/{result.value.totalCount} 个测试点通过{result.value.timeMs!==undefined?` · ${result.value.timeMs} ms`:''}</p>{result.value.error&&<pre className="stderr">{result.value.error}</pre>}<small>隐藏输入和期望输出仅保存在服务器，不会发送到浏览器或 AI。</small></div>}
       </div>}
 
       {activePanel === 'history' && <div className="history-panel" role="tabpanel">
         {!recentAttempts.length && <p className="result-placeholder">还没有尝试记录。每次运行或样例提交都会保留代码快照与结果。</p>}
         {recentAttempts.map((attempt) => <div className="attempt-row" key={attempt.id}><span className={`attempt-outcome ${attempt.outcome}`} /> <div><strong>{attempt.mode === 'run' ? '运行' : '样例提交'}</strong><small>{attempt.summary}</small></div><time>{new Date(attempt.createdAt).toLocaleString('zh-CN')}</time></div>)}
       </div>}
-      {activePanel === 'coach' && <div role="tabpanel"><CoachPanel problem={problem} attempt={coachAttempt} mastery={mastery} coachUrl={configuredCoach} agentUrl={configuredAgent} onIntervention={onIntervention} /></div>}
+      {assistanceAllowed && activePanel === 'coach' && <div role="tabpanel"><CoachPanel problem={problem} attempt={coachAttempt} mastery={mastery} coachUrl={configuredCoach} agentUrl={configuredAgent} onIntervention={onIntervention} /></div>}
     </section>
   );
 }

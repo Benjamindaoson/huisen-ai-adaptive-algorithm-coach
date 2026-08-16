@@ -42,6 +42,28 @@ describe('deriveMastery', () => {
     expect(array).toMatchObject({ score: 0.25, confidence: 0, evidenceCount: 0, lastPracticedAt: null });
   });
 
+  it('does not treat handoff usefulness feedback as mastery evidence', () => {
+    const feedback: LearningEvent = {
+      id: 'handoff-feedback', learnerId: 'learner-a', kind: 'lesson-handoff-feedback',
+      data: { lessonId: 'variables-state', recommendationId: 'handoff-variables-state-0123abcd', choiceId: 'helpful' }, createdAt: '2026-08-14T10:00:00Z',
+    };
+    const array = deriveMastery([], problems, [feedback]).find((item) => item.skillId === 'array')!;
+    expect(array).toMatchObject({ score: 0.25, confidence: 0, evidenceCount: 0, lastPracticedAt: null });
+  });
+
+  it('does not treat corrected-model recap reflection as mastery evidence', () => {
+    const reflection: LearningEvent = {
+      id: 'recap-reflection', learnerId: 'learner-a', kind: 'lesson-handoff-feedback',
+      data: {
+        lessonId: 'variables-state', recommendationId: 'handoff-variables-state-0123abcd',
+        choiceId: 'helpful', reason: 'recap-corrected-model:starter-array-traversal',
+      },
+      createdAt: '2026-08-14T10:00:00Z',
+    };
+    const array = deriveMastery([], problems, [reflection]).find((item) => item.skillId === 'array')!;
+    expect(array).toMatchObject({ score: 0.25, confidence: 0, evidenceCount: 0, lastPracticedAt: null });
+  });
+
   it('does not raise mastery for a pass assisted earlier in the same solve session', () => {
     const pass = submission('pass-after-hint', 'passed', '2026-08-11T02:00:00Z');
     const hint: LearningEvent = {

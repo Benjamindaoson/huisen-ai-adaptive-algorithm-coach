@@ -43,4 +43,9 @@ describe('exam selection', () => {
     expect(first).toContain('graph');
     expect(first).toContain('dp');
   });
+
+  it('restricts a hidden-judged exam to server-advertised problem ids', () => {
+    const catalog = [problem('public-only'), problem('hidden-a'), problem('hidden-b')];
+    expect(selectExamProblems(catalog, 3, { eligibleIds: new Set(['hidden-a', 'hidden-b']) }).map((item) => item.id)).toEqual(['hidden-a', 'hidden-b']);
+  });
 });

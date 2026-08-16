@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/start.ts",
     "start": "tsx src/start.ts",
+    "migrate": "tsx src/migrate.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

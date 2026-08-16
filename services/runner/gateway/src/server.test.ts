@@ -1,10 +1,11 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { buildServer } from './server.js';
 import { createSubmissionService } from './submissions.js';
 import { createLearningStore } from './learning-store.js';
 import { createCorpusRetriever, type MentorRetrievalIndex } from './mentor/corpus-retrieval.js';
 import { createMentorStore } from './mentor/mentor-store.js';
 import { createLearnerIdentityService } from './learner-identity.js';
+import { createQualityReviewStore } from './quality-review-store.js';
 
 const servers: ReturnType<typeof buildServer>[] = [];
 afterEach(async () => Promise.all(servers.splice(0).map((server) => server.close())));
@@ -74,6 +75,98 @@ describe('hidden submission routes', () => {
     const rejected = await app.inject({ method: 'POST', url: '/submissions', payload: { problemId: 'p1', language: 'python', sourceCode: 'x', hiddenTests: [] } });
     expect(rejected.statusCode).toBe(400);
     expect((await app.inject({ method: 'GET', url: '/submissions/missing' })).statusCode).toBe(404);
+  });
+});
+
+describe('quality review routes', () => {
+  it('loads server-backed comparisons and durably records a complete teacher review', async () => {
+    const qualityReviewStore = createQualityReviewStore();
+    const app = buildServer({ qualityReviewStore, qualityGate: { passed: false, eligibleRealCaseCount: 0, minimumEligibleRealCases: 100, failures: ['eligible-real-cases: 0/100'] } }); servers.push(app);
+    const comparison = {
+      id: 'cmp-1', datasetVersion: 'mentor-v2', caseId: 'case-1',
+      evidence: {
+        attempt: { id: 'attempt-1', sourceHash: 'a'.repeat(64), createdAt: '2026-08-12T00:00:00.000Z' },
+        run: { outcome: 'wrong-answer', evidenceRefs: ['run:1'] },
+        toolCalls: [{ name: 'run-sample', argumentsHash: 'b'.repeat(64), resultHash: 'c'.repeat(64) }],
+        currentEditor: { sourceHash: 'd'.repeat(64) },
+        diff: { stale: true, summary: 'changed', hunks: ['@@'] },
+      },
+      candidates: [
+        { hash: 'e'.repeat(64), mentorVersion: 'a', text: '先预测。', evidenceRefs: ['run:1'] },
+        { hash: 'f'.repeat(64), mentorVersion: 'b', text: '直接答案。', evidenceRefs: [] },
+      ],
+    };
+    expect((await app.inject({ method: 'POST', url: '/quality/comparisons', payload: comparison })).statusCode).toBe(201);
+    const listed = await app.inject({ method: 'GET', url: '/quality/workbench' });
+    expect(listed.statusCode).toBe(200);
+    expect(listed.json()).toMatchObject({
+      comparisons: [{ id: 'cmp-1', caseId: 'case-1' }], teacherReviews: [], adjudicationQueue: [], calibrations: [],
+      qualityGate: { passed: false, eligibleRealCaseCount: 0, failures: ['eligible-real-cases: 0/100'] },
+    });
+
+    const submitted = await app.inject({ method: 'POST', url: '/quality/reviews', payload: {
+      id: 'review-1', comparisonId: 'cmp-1', reviewerId: 'teacher-1', preferredHash: 'e'.repeat(64),
+      rubric: { localization: true, cause: true, evidence: true, minimalHint: true, leakage: false },
+      evidenceRefs: ['run:1'], notes: '', reviewedAt: '2026-08-12T01:00:00.000Z',
+    } });
+    expect(submitted.statusCode).toBe(201);
+    expect((await app.inject({ method: 'GET', url: '/quality/workbench' })).json().teacherReviews).toHaveLength(1);
+  });
+});
+
+  describe('AI collaboration exam route', () => {
+  it('returns only server-executed agent evidence and reports unavailable without a configured model', async () => {
+    const app = buildServer({ mentorModel: null }); servers.push(app);
+    const response = await app.inject({ method: 'POST', url: '/exam-agent/turn', payload: {
+      version: 1, sessionId: 'exam-1', phase: 'review',
+      problem: { id: 'p1', title: '数组求和', description: '输出数组和', input: '整数', output: '总和' },
+      answer: { language: 'python', sourceCode: 'print(0)' }, learnerPrompt: '检查代码',
+    } });
+    expect(response.statusCode).toBe(200);
+    expect(response.json()).toMatchObject({ mode: 'unavailable', executions: [], evidence: [] });
+  });
+  });
+
+describe('generated content execution route', () => {
+    it('executes every generated test on the server before validation', async () => {
+      const executeRun = vi.fn(async (request: { stdin: string }) => ({ kind: 'success' as const, stdout: request.stdin, stderr: '', timeMs: 4 }));
+      const app = buildServer({ executeRun: executeRun as never }); servers.push(app);
+      const response = await app.inject({ method: 'POST', url: '/content/validate-execution', payload: {
+        language: 'python', solution: 'print(input())', tests: [{ input: 'a\n', expectedOutput: 'a\n' }], constraints: { timeLimitMs: 1000, memoryLimitMb: 128 },
+      } });
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toMatchObject({ passed: true, executedCount: 1 });
+      expect(executeRun).toHaveBeenCalledOnce();
+    });
+  });
+
+describe('Mentor OS routes', () => {
+  it('starts, resumes, and idempotently commits an authenticated run', async () => {
+    const learnerIdentity = createLearnerIdentityService({ secret: 'mentor-os-server-test-secret-32-bytes' });
+    const app = buildServer({ learnerIdentity }); servers.push(app);
+    const authorization = `Bearer ${learnerIdentity.issue('learner-os').token}`;
+    const started = await app.inject({ method: 'POST', url: '/mentor-os/runs', headers: { authorization }, payload: { version: 1, learnerId: 'learner-os', goal: '掌握双指针', route: { kind: 'learn', ref: 'two-pointer' }, idempotencyKey: 'start-os' } });
+    expect(started.statusCode).toBe(201);
+    const run = started.json();
+    const command = { version: 1, runId: run.id, idempotencyKey: 'cmd-os', kind: 'stop', expectedSequence: 1, stopReason: 'awaiting-learner', detail: '请预测指针状态' };
+    const first = await app.inject({ method: 'POST', url: `/mentor-os/runs/${run.id}/commands`, headers: { authorization }, payload: command });
+    const retry = await app.inject({ method: 'POST', url: `/mentor-os/runs/${run.id}/commands`, headers: { authorization }, payload: command });
+    expect(first.json()).toEqual(retry.json());
+    const resumed = await app.inject({ method: 'GET', url: `/mentor-os/runs/${run.id}?learnerId=learner-os&after=1`, headers: { authorization } });
+    expect(resumed.json()).toMatchObject({ checkpoint: { stopReason: 'awaiting-learner' }, events: [{ sequence: 2 }] });
+  });
+
+  it('offers cursor-recoverable SSE lifecycle snapshots', async () => {
+    const learnerIdentity = createLearnerIdentityService({ secret: 'mentor-os-sse-test-secret-32-bytes' });
+    const app = buildServer({ learnerIdentity }); servers.push(app);
+    const authorization = `Bearer ${learnerIdentity.issue('learner-sse').token}`;
+    const started = await app.inject({ method: 'POST', url: '/mentor-os/runs', headers: { authorization }, payload: { version: 1, learnerId: 'learner-sse', goal: '完成今日学习', route: { kind: 'today', ref: 'daily' }, idempotencyKey: 'start-sse' } });
+    const run = started.json();
+    const response = await app.inject({ method: 'GET', url: `/mentor-os/runs/${run.id}/events?learnerId=learner-sse&after=0`, headers: { authorization } });
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['content-type']).toContain('text/event-stream');
+    expect(response.body).toContain('id: 1');
+    expect(response.body).toContain('event: run-started');
   });
 });
 

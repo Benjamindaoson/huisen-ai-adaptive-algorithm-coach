@@ -1,0 +1,14 @@
+[
+  { "caseId": "js-off-by-one-01", "misconception": "off-by-one", "lines": [1], "confidence": "high", "evidenceRefs": ["judge:public:case-1"], "hintIntent": "predict-boundary", "hint": "先预测 i 等于数组长度时，下一次读取对应哪个位置。" },
+  { "caseId": "py-input-api-01", "misconception": "input-parsing", "lines": [1], "confidence": "high", "evidenceRefs": ["stderr:line:1"], "hintIntent": "inspect-input-api", "hint": "第 1 行拿到的是输入函数，还是输入函数执行后的文本？" },
+  { "caseId": "java-tokenizer-01", "misconception": "input-parsing", "lines": [2], "confidence": "medium", "evidenceRefs": ["failed-input:line:1"], "hintIntent": "compare-delimiter", "hint": "把样例中的分隔符与第 2 行实际使用的分隔符逐字符比较。" },
+  { "caseId": "cpp-empty-01", "misconception": "missing-empty-case", "lines": [1], "confidence": "high", "evidenceRefs": ["stderr:segmentation-fault", "failed-input:empty"], "hintIntent": "predict-empty-state", "hint": "当数组没有任何元素时，第 1 行会读取什么位置？" },
+  { "caseId": "py-state-reset-01", "misconception": "state-reset", "lines": [1, 5], "confidence": "high", "evidenceRefs": ["runtime:group-2"], "hintIntent": "trace-second-group", "hint": "只跟踪第二组开始前 total 的值，它是否仍带着第一组的结果？" },
+  { "caseId": "js-compare-01", "misconception": "comparison-semantics", "lines": [1], "confidence": "medium", "evidenceRefs": ["failed-output:numeric-order"], "hintIntent": "predict-sort-order", "hint": "先预测 2、10、3 被默认排序后谁会排在最前面。" },
+  { "caseId": "java-overflow-01", "misconception": "numeric-overflow", "lines": [1, 2], "confidence": "high", "evidenceRefs": ["failed-output:overflow"], "hintIntent": "estimate-range", "hint": "先用输入上限估算 total 可能达到的数量级，再和当前类型范围比较。" },
+  { "caseId": "cpp-binary-boundary-01", "misconception": "off-by-one", "lines": [1, 3], "confidence": "high", "evidenceRefs": ["runtime:left-right-stable"], "hintIntent": "trace-progress", "hint": "找一组 left 与 right 相邻的状态，手算一次后区间是否一定缩小。" },
+  { "caseId": "py-complexity-01", "misconception": "complexity", "lines": [1, 2], "confidence": "high", "evidenceRefs": ["judge:public:timeout", "constraint:n-200000"], "hintIntent": "count-operations", "hint": "当 n 为二十万时，外层每次查找最多又检查多少元素？" },
+  { "caseId": "js-output-format-01", "misconception": "output-format", "lines": [1], "confidence": "high", "evidenceRefs": ["failed-output:whitespace", "problem:output-format"], "hintIntent": "compare-output-bytes", "hint": "比较预期输出与实际输出中数字之间那个字符。" },
+  { "caseId": "java-uninitialized-01", "misconception": "state-initialization", "lines": [1, 3], "confidence": "high", "evidenceRefs": ["stderr:variable-might-not-have-been-initialized"], "hintIntent": "trace-false-branch", "hint": "沿 flag 为 false 的路径走到第 3 行，answer 在哪里获得过值？" },
+  { "caseId": "cpp-unknown-01", "misconception": "unknown", "lines": [], "confidence": "low", "evidenceRefs": ["judge:public:case-5"], "hintIntent": "request-more-evidence", "hint": "目前只有结果错误，先补充一个最小失败输入或运行时状态再定位。" }
+]

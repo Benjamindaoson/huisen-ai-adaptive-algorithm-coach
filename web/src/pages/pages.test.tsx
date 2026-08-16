@@ -10,6 +10,7 @@ import { TodayPage } from './TodayPage';
 import { emptyLearnerMemory } from '../lib/learner-memory';
 import type { AgentDecision } from '../lib/learning-orchestrator';
 import { FOUNDATION_LESSONS } from '../lib/foundation-curriculum';
+import { STARTER_ALGORITHM_LESSONS } from '../lib/starter-algorithm-curriculum';
 
 const problem: CatalogProblem = {
   id: 'p1', title: '数组排序', excerpt: '给定数组', collection: 'A卷', score: 100,
@@ -27,13 +28,23 @@ it('keeps Today focused on a single recommended action', () => {
   const html = renderToStaticMarkup(<TodayPage
     plan={[{ problemId: 'p1', title: '数组排序', kind: 'weakness', skillId: 'array', reason: '你最近在数组边界上失分' }]}
     decision={decision} profile={emptyLearnerMemory().profile} onSaveProfile={() => undefined}
+    events={[{ id: 'review-1', learnerId: 'learner-a', kind: 'mastery-check-failed', problemId: 'p0', data: { skillIds: ['array'], reason: '延迟复测未通过' }, createdAt: '2026-08-10T00:00:00Z' }]}
     evidenceCount={3} reviewCount={1} completedCount={2} onOpen={() => undefined}
   />);
 
   expect(html).toContain('今天先完成这一件事');
   expect(html).toContain('你最近在数组边界上失分');
-  expect(html).toContain('学习编排决策');
+  expect(html).toContain('预计 35 分钟');
+  expect(html).toContain('完成后你将能够');
+  expect(html).toContain('基于 3 条练习证据');
+  expect(html).toContain('今日学习计划');
+  expect(html).toContain('不是完成更多');
+  expect(html).toContain('而是掌握得更深');
+  expect(html).toContain('导师已根据你的学习记录安排下一步');
   expect(html).toContain('查看规划依据（规则计算）');
+  expect(html).toContain('为什么安排这一步');
+  expect(html).toContain('为什么是现在');
+  expect(html).toContain('延迟复测未通过');
   expect(html).toContain('trace-test');
   expect(html).not.toContain('搜索全部题库');
   expect(html).not.toContain('六条学习路径');
@@ -45,14 +56,15 @@ it('gives every module a distinct page heading', () => {
     renderToStaticMarkup(<PathsPage catalog={[problem]} progress={{ version: 1, problems: {} }} events={[]} onOpen={() => undefined} onLearn={() => undefined} />),
     renderToStaticMarkup(<ReviewPage cards={[]} onOpen={() => undefined} />),
     renderToStaticMarkup(<ExamPage exam={null} starting={false} onStart={() => undefined} onContinue={() => undefined} />),
-    renderToStaticMarkup(<InsightsPage mastery={[]} />),
+    renderToStaticMarkup(<InsightsPage mastery={[]} learningEvents={[]} />),
   ];
 
-  expect(pages[0]).toContain('题库');
+  expect(pages[0]).toContain('题库练习');
   expect(pages[1]).toContain('学习中心');
-  expect(pages[2]).toContain('错题本');
-  expect(pages[3]).toContain('模拟考试');
-  expect(pages[4]).toContain('能力报告');
+  expect(pages[2]).toContain('错因复练');
+  expect(pages[3]).toContain('算法初试');
+  expect(pages[4]).toContain('能力模型');
+  expect(pages[4]).toContain('不替代教师、学校、企业或专业机构的最终评价');
 });
 
 it('puts the next unlocked lesson ahead of random practice for a foundation learner', () => {
@@ -65,4 +77,18 @@ it('puts the next unlocked lesson ahead of random practice for a foundation lear
   expect(html).toContain('今天先建立一个代码直觉');
   expect(html).toContain('让程序听懂你的话');
   expect(html).not.toContain('开始练习');
+});
+
+it('turns a cold start into a visible ten-minute AI training mission instead of a raw problem recommendation', () => {
+  const html = renderToStaticMarkup(<TodayPage
+    plan={[{ problemId: 'p1', title: '数组排序', kind: 'baseline', skillId: 'array', reason: '建立基线' }]}
+    starterLesson={STARTER_ALGORITHM_LESSONS[0]} onAcknowledgeMission={() => undefined} onLearn={() => undefined}
+    evidenceCount={0} reviewCount={0} completedCount={0} onOpen={() => undefined}
+  />);
+
+  expect(html).toContain('AI 先带你建立第一个算法直觉');
+  expect(html).toContain('AI 入门训练 · 约 10 分钟');
+  expect(html).toContain('完成后你将能够');
+  expect(html).toContain('为什么先学这个');
+  expect(html).not.toContain('数组排序');
 });

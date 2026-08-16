@@ -9,7 +9,7 @@ export type StructuralKind = 'function' | 'loop' | 'branch' | 'declaration' | 'r
 export type SourceRange = { startLine: number; startColumn: number; endLine: number; endColumn: number };
 export type ParsedNodeEvidence = {
   id: string; grammarType: string; kind: StructuralKind; range: SourceRange; text: string;
-  parentId?: string; scopeId?: string; symbolName?: string; calleeName?: string;
+  parentId?: string; scopeId?: string; symbolName?: string; calleeName?: string; callTarget?: 'bare' | 'member';
 };
 export type ParseErrorEvidence = { evidenceRef: string; message: string; range: SourceRange };
 export type ParsedProgramEvidence = {
@@ -69,6 +69,17 @@ function semanticName(node: Parser.SyntaxNode, structuralKind: StructuralKind): 
   return undefined;
 }
 
+function callTarget(node: Parser.SyntaxNode): { name: string; kind: 'bare' | 'member' } | undefined {
+  const target = node.childForFieldName('function') ?? node.childForFieldName('name');
+  const object = node.childForFieldName('object');
+  const text = target?.text ?? '';
+  if (!text) return undefined;
+  if (/^[A-Za-z_$][\w$]*$/.test(text) && !object) return { name: text, kind: 'bare' };
+  const name = text.match(/(?:\.|::|->)\s*([A-Za-z_$][\w$]*)$/)?.[1]
+    ?? text.match(/([A-Za-z_$][\w$]*)$/)?.[1];
+  return name ? { name, kind: 'member' } : undefined;
+}
+
 export async function parseSource(input: { language: AllowedLanguage; sourceCode: string }): Promise<ParsedProgramEvidence> {
   const selected = LANGUAGES[input.language];
   const parser = new Parser();
@@ -83,12 +94,14 @@ export async function parseSource(input: { language: AllowedLanguage; sourceCode
     const structuralKind = kind(node.type);
     if (structuralKind !== 'other') {
       const nextScopeId = structuralKind === 'function' ? nodeId : scopeId;
-      const name = semanticName(node, structuralKind);
+      const call = structuralKind === 'call' ? callTarget(node) : undefined;
+      const name = call?.name ?? semanticName(node, structuralKind);
       nodes.push({
         id: nodeId, grammarType: node.type, kind: structuralKind, range: range(node), text: compact(node.text),
         ...(parentId ? { parentId } : {}), ...(nextScopeId ? { scopeId: nextScopeId } : {}),
         ...(structuralKind === 'function' && name ? { symbolName: name } : {}),
         ...(structuralKind === 'call' && name ? { calleeName: name } : {}),
+        ...(structuralKind === 'call' && call ? { callTarget: call.kind } : {}),
       });
       parentId = nodeId;
       scopeId = nextScopeId;

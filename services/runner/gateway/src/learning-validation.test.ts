@@ -36,6 +36,36 @@ describe('learning API validation', () => {
     })).toMatchObject({ kind: 'lesson-checkpoint-passed', data: { lessonId: 'input-output', correct: true } });
   });
 
+  it('accepts only bounded evidence-linked lesson handoff feedback', () => {
+    const valid = {
+      id: 'handoff-feedback-helpful', kind: 'lesson-handoff-feedback',
+      data: { lessonId: 'variables-state', recommendationId: 'handoff-variables-state-0123abcd', choiceId: 'helpful' }, createdAt: '2026-08-14T10:00:00Z',
+    };
+    expect(validateLearningEvent('learner-a', valid)).toMatchObject({ kind: 'lesson-handoff-feedback', data: { choiceId: 'helpful' } });
+    expect(() => validateLearningEvent('learner-a', { ...valid, data: { ...valid.data, choiceId: 'explain-everything' } })).toThrow('Invalid learning event semantics');
+    expect(() => validateLearningEvent('learner-a', { ...valid, data: { lessonId: 'variables-state', choiceId: 'helpful' } })).toThrow('Invalid learning event semantics');
+  });
+
+  it('accepts bounded bridge diagnosis events and rejects answer text', () => {
+    const event = {
+      id: 'diagnostic-state', kind: 'bridge-diagnostic-step-recorded',
+      data: { curriculumVersion: '2.0.0', diagnosticStep: 'state', correct: true }, createdAt: '2026-08-14T00:00:00Z',
+    };
+    expect(validateLearningEvent('learner-a', event)).toMatchObject({ kind: 'bridge-diagnostic-step-recorded', data: { diagnosticStep: 'state', correct: true } });
+    expect(() => validateLearningEvent('learner-a', { ...event, data: { ...event.data, answer: 'private' } })).toThrow('Invalid learning event data');
+  });
+
+  it('keeps gateway parity for existing first-minute and training events', () => {
+    expect(validateLearningEvent('learner-a', {
+      id: 'training-build', kind: 'training-stage-completed',
+      data: { lessonId: 'starter-array-traversal', stage: 'build', correct: true }, createdAt: '2026-08-14T00:00:00Z',
+    })).toMatchObject({ kind: 'training-stage-completed', data: { stage: 'build' } });
+    expect(validateLearningEvent('learner-a', {
+      id: 'first-run', kind: 'first-minute-first-run',
+      data: { lessonId: 'starter-array-traversal' }, createdAt: '2026-08-14T00:01:00Z',
+    })).toMatchObject({ kind: 'first-minute-first-run' });
+  });
+
   it('rejects unknown lesson stages and free-form learner answers', () => {
     expect(() => validateLearningEvent('learner-a', {
       id: 'lesson-event-2', kind: 'lesson-completed',
@@ -45,5 +75,24 @@ describe('learning API validation', () => {
       id: 'lesson-event-3', kind: 'lesson-completed',
       data: { lessonId: 'input-output', answer: 'private response' }, createdAt: '2026-08-11T00:00:00Z',
     })).toThrow('Invalid learning event data');
+  });
+
+  it('accepts only independently verified transfer pass evidence', () => {
+    const valid = {
+      id: 'lesson-transfer-pass-1', kind: 'lesson-transfer-passed', problemId: 'od-transfer', attemptId: 'attempt-pass',
+      data: { lessonId: 'arrays-strings', stage: 'transfer', correct: true, assisted: false }, createdAt: '2026-08-12T00:00:00Z',
+    };
+    expect(validateLearningEvent('learner-a', valid)).toMatchObject({ kind: 'lesson-transfer-passed', problemId: 'od-transfer', attemptId: 'attempt-pass' });
+    expect(() => validateLearningEvent('learner-a', { ...valid, attemptId: undefined })).toThrow('Invalid learning event semantics');
+    expect(() => validateLearningEvent('learner-a', { ...valid, data: { ...valid.data, assisted: true } })).toThrow('Invalid learning event semantics');
+  });
+
+  it('accepts bounded project practicum evidence and rejects source code', () => {
+    const event = {
+      id: 'practicum-test-1', kind: 'practicum-tested', problemId: 'repo-pagination',
+      data: { phase: 'verification', passed: false, passedCount: 2, totalCount: 4 }, createdAt: '2026-08-13T00:00:00Z',
+    };
+    expect(validateLearningEvent('learner-a', event)).toMatchObject({ kind: 'practicum-tested', problemId: 'repo-pagination' });
+    expect(() => validateLearningEvent('learner-a', { ...event, data: { ...event.data, sourceCode: 'secret' } })).toThrow('Invalid learning event data');
   });
 });

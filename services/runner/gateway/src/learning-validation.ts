@@ -1,12 +1,11 @@
-export const LEARNING_EVENT_KINDS = [
-  'goal-updated', 'attempt-recorded', 'hint-requested', 'hint-received',
-  'reference-unlocked', 'mastery-check-started', 'mastery-check-passed', 'mastery-check-failed',
-  'lesson-started', 'lesson-checkpoint-passed', 'lesson-completed', 'lesson-transfer-started',
-] as const;
+import {
+  LEARNING_ATTEMPT_OUTCOMES, LEARNING_DIAGNOSTIC_STEPS, LEARNING_EVENT_DATA_KEYS, LEARNING_EVENT_KINDS,
+  LEARNING_LANGUAGES, LEARNING_LESSON_STAGES, LEARNING_PRACTICUM_PHASES, LEARNING_REFLECTION_TAGS,
+  LEARNING_TARGETS, LEARNING_TRAINING_STAGES, type LearningEventKind, type LearningLanguage, type LearningTarget,
+} from '../../../../contracts/learning-event-contract.js';
 
-export type LearningEventKind = (typeof LEARNING_EVENT_KINDS)[number];
-export type LearningTarget = 'od-exam' | 'interview' | 'foundation';
-export type LearningLanguage = 'java' | 'python' | 'javascript' | 'cpp';
+export { LEARNING_EVENT_KINDS };
+export type { LearningEventKind, LearningLanguage, LearningTarget };
 
 export type LearnerProfile = {
   learnerId: string;
@@ -33,18 +32,22 @@ export type AgentPlanRequest = {
   candidates: Array<{ problemId: string; title: string; skillId: string }>;
 };
 
-const TARGETS: LearningTarget[] = ['od-exam', 'interview', 'foundation'];
-const LANGUAGES: LearningLanguage[] = ['java', 'python', 'javascript', 'cpp'];
-const EVENT_DATA_KEYS = ['hintLevel', 'outcome', 'assisted', 'skillIds', 'reason', 'target', 'examDate', 'dailyMinutes', 'preferredLanguage', 'lessonId', 'stage', 'correct'];
-const ATTEMPT_OUTCOMES = ['executed', 'passed', 'wrong-answer', 'compile-error', 'runtime-error', 'timeout', 'unavailable'];
-const LESSON_STAGES = ['explain', 'observe', 'predict', 'complete', 'transfer'];
+const TARGETS: readonly LearningTarget[] = LEARNING_TARGETS;
+const LANGUAGES: readonly LearningLanguage[] = LEARNING_LANGUAGES;
+const EVENT_DATA_KEYS: readonly string[] = LEARNING_EVENT_DATA_KEYS;
+const ATTEMPT_OUTCOMES: readonly string[] = LEARNING_ATTEMPT_OUTCOMES;
+const LESSON_STAGES: readonly string[] = LEARNING_LESSON_STAGES;
+const TRAINING_STAGES: readonly string[] = LEARNING_TRAINING_STAGES;
+const PRACTICUM_PHASES: readonly string[] = LEARNING_PRACTICUM_PHASES;
+const REFLECTION_TAGS: readonly string[] = LEARNING_REFLECTION_TAGS;
+const DIAGNOSTIC_STEPS: readonly string[] = LEARNING_DIAGNOSTIC_STEPS;
 
 function record(value: unknown, message: string): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error(message);
   return value as Record<string, unknown>;
 }
 
-function onlyKeys(value: Record<string, unknown>, allowed: string[], message: string) {
+function onlyKeys(value: Record<string, unknown>, allowed: readonly string[], message: string) {
   if (Object.keys(value).some((key) => !allowed.includes(key))) throw new Error(message);
 }
 
@@ -74,8 +77,17 @@ function validateEventData(value: unknown): Record<string, unknown> {
   if (data.dailyMinutes !== undefined && (!Number.isInteger(data.dailyMinutes) || (data.dailyMinutes as number) < 10 || (data.dailyMinutes as number) > 480)) throw new Error('Invalid learning event data');
   if (data.preferredLanguage !== undefined && !LANGUAGES.includes(data.preferredLanguage as LearningLanguage)) throw new Error('Invalid learning event data');
   if (data.lessonId !== undefined && !validId(data.lessonId)) throw new Error('Invalid learning event data');
-  if (data.stage !== undefined && !LESSON_STAGES.includes(data.stage as string)) throw new Error('Invalid learning event data');
+  if (data.recommendationId !== undefined && !validId(data.recommendationId)) throw new Error('Invalid learning event data');
+  if (data.stage !== undefined && ![...LESSON_STAGES, ...TRAINING_STAGES].includes(data.stage as string)) throw new Error('Invalid learning event data');
   if (data.correct !== undefined && typeof data.correct !== 'boolean') throw new Error('Invalid learning event data');
+  if (data.phase !== undefined && !PRACTICUM_PHASES.includes(data.phase as string)) throw new Error('Invalid learning event data');
+  if (data.choiceId !== undefined && !validId(data.choiceId)) throw new Error('Invalid learning event data');
+  if (data.passed !== undefined && typeof data.passed !== 'boolean') throw new Error('Invalid learning event data');
+  if (data.passedCount !== undefined && (!Number.isInteger(data.passedCount) || (data.passedCount as number) < 0 || (data.passedCount as number) > 100)) throw new Error('Invalid learning event data');
+  if (data.totalCount !== undefined && (!Number.isInteger(data.totalCount) || (data.totalCount as number) < 1 || (data.totalCount as number) > 100)) throw new Error('Invalid learning event data');
+  if (data.reflectionTag !== undefined && !REFLECTION_TAGS.includes(data.reflectionTag as string)) throw new Error('Invalid learning event data');
+  if (data.curriculumVersion !== undefined && (typeof data.curriculumVersion !== 'string' || !/^\d+\.\d+\.\d+$/.test(data.curriculumVersion))) throw new Error('Invalid learning event data');
+  if (data.diagnosticStep !== undefined && !DIAGNOSTIC_STEPS.includes(data.diagnosticStep as string)) throw new Error('Invalid learning event data');
   return data;
 }
 
@@ -105,7 +117,10 @@ export function validateLearningEvent(learnerId: unknown, body: unknown): Learni
   const data = validateEventData(event.data);
   const kind = event.kind as LearningEventKind;
   const lessonKind = kind.startsWith('lesson-');
-  const needsProblem = kind !== 'goal-updated' && !lessonKind;
+  const trainingKind = kind.startsWith('training-');
+  const firstMinuteKind = kind.startsWith('first-minute-');
+  const bridgeDiagnosticKind = kind.startsWith('bridge-diagnostic-');
+  const needsProblem = kind !== 'goal-updated' && !lessonKind && !trainingKind && !firstMinuteKind && !bridgeDiagnosticKind;
   const needsAttempt = ['attempt-recorded', 'hint-requested', 'hint-received'].includes(kind);
   if ((needsProblem && !event.problemId) || (needsAttempt && !event.attemptId)) throw new Error('Invalid learning event semantics');
   if (kind === 'attempt-recorded' && !ATTEMPT_OUTCOMES.includes(data.outcome as string)) throw new Error('Invalid learning event semantics');
@@ -117,6 +132,23 @@ export function validateLearningEvent(learnerId: unknown, body: unknown): Learni
   if (kind === 'lesson-checkpoint-passed' && (data.stage !== 'predict' || data.correct !== true)) throw new Error('Invalid learning event semantics');
   if (kind === 'lesson-completed' && (data.stage !== 'complete' || data.correct !== true)) throw new Error('Invalid learning event semantics');
   if (kind === 'lesson-transfer-started' && data.stage !== 'transfer') throw new Error('Invalid learning event semantics');
+  if (kind === 'lesson-transfer-passed' && (!event.problemId || !event.attemptId || data.stage !== 'transfer' || data.correct !== true || data.assisted !== false)) throw new Error('Invalid learning event semantics');
+  if (kind === 'lesson-handoff-feedback' && (!validId(data.recommendationId) || !['helpful', 'unclear'].includes(String(data.choiceId)))) throw new Error('Invalid learning event semantics');
+  if (trainingKind && !validId(data.lessonId)) throw new Error('Invalid learning event semantics');
+  if (kind === 'training-session-started' && data.stage !== 'explain') throw new Error('Invalid learning event semantics');
+  if (kind === 'training-stage-completed' && (!TRAINING_STAGES.includes(data.stage as string) || data.correct !== true)) throw new Error('Invalid learning event semantics');
+  if (kind === 'training-session-completed' && data.stage !== 'transfer') throw new Error('Invalid learning event semantics');
+  if (firstMinuteKind && !validId(data.lessonId)) throw new Error('Invalid learning event semantics');
+  if (kind === 'bridge-diagnostic-started' && !data.curriculumVersion) throw new Error('Invalid learning event semantics');
+  if (kind === 'bridge-diagnostic-step-recorded' && (!data.curriculumVersion || !DIAGNOSTIC_STEPS.includes(data.diagnosticStep as string) || typeof data.correct !== 'boolean')) throw new Error('Invalid learning event semantics');
+  if (kind === 'mentor-revision-verified' && (!event.problemId || data.outcome !== 'passed')) throw new Error('Invalid learning event semantics');
+  if (kind.startsWith('practicum-') && !event.problemId) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-started' && data.phase !== 'understanding') throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-phase-completed' && (!['diagnosis', 'planning'].includes(data.phase as string) || !validId(data.choiceId))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-hint-used' && (!PRACTICUM_PHASES.includes(data.phase as string) || ![1, 2, 3, 4].includes(data.hintLevel as number))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-tested' && (data.phase !== 'verification' || typeof data.passed !== 'boolean' || !Number.isInteger(data.passedCount) || !Number.isInteger(data.totalCount) || (data.passedCount as number) > (data.totalCount as number))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-reflected' && (data.phase !== 'reflection' || !REFLECTION_TAGS.includes(data.reflectionTag as string))) throw new Error('Invalid learning event semantics');
+  if (kind === 'practicum-completed' && (data.phase !== 'completed' || data.passed !== true)) throw new Error('Invalid learning event semantics');
   return { ...event, learnerId: id, data } as LearningEvent;
 }
 

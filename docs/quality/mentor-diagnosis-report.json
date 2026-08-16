@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "benchmark": "mentor-diagnosis-seed-v1",
+  "fixtureCount": 12,
+  "metrics": {
+    "lineAccuracy": 1,
+    "misconceptionAccuracy": 1,
+    "unsupportedHighConfidenceRate": 0,
+    "minimalHintUsefulness": 1,
+    "answerLeakageRate": 0
+  },
+  "thresholds": {
+    "lineAccuracy": 0.8,
+    "misconceptionAccuracy": 0.7,
+    "unsupportedHighConfidenceRate": 0.02,
+    "minimalHintUsefulness": 0.4,
+    "answerLeakageRate": 0
+  },
+  "thresholdStatus": {
+    "lineAccuracy": true,
+    "misconceptionAccuracy": true,
+    "unsupportedHighConfidenceRate": true,
+    "minimalHintUsefulness": true,
+    "answerLeakageRate": true
+  },
+  "rows": [
+    {
+      "caseId": "js-off-by-one-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "py-input-api-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "java-tokenizer-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "cpp-empty-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "py-state-reset-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "js-compare-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "java-overflow-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "cpp-binary-boundary-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "py-complexity-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "js-output-format-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "java-uninitialized-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    },
+    {
+      "caseId": "cpp-unknown-01",
+      "lineCorrect": true,
+      "misconceptionCorrect": true,
+      "unsupportedHighConfidence": false,
+      "minimalHintUseful": true,
+      "answerLeakage": false
+    }
+  ],
+  "generatedFrom": [
+    "quality/mentor-diagnosis-v1.json",
+    "quality/mentor-predictions-v1.json"
+  ],
+  "maturity": "seed-baseline",
+  "caveat": "Seed fixtures verify the evaluation pipeline; they are not evidence of live-model effectiveness on real learners."
+}

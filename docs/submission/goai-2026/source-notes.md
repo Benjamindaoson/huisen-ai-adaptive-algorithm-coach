@@ -45,5 +45,6 @@
 - Judge0 CE：隔离代码执行。
 - Tree-sitter：JavaScript、Python、Java、C++语法解析。
 - React、Vite、Fastify、PostgreSQL、Redis：Web与后端基础设施。
+- Edge TTS `zh-CN-YunxiNeural`：仅用于初赛Demo中文旁白生成，不属于产品教学模型或多模态能力。
 
 正式材料必须在技术架构和合规说明中披露上述用途，不在PPT中虚构第三方认证、合作或背书。

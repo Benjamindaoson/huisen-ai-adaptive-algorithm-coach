@@ -44,7 +44,7 @@ export function buildAgentRequest(problem: ProblemRecord, attempt: PracticeAttem
   const description = problem.sections.description ?? '';
   const input = problem.sections.input ?? '';
   const output = problem.sections.output ?? '';
-  const skillIds = inferProblemSkills({ title: problem.title, searchText: `${description}\n${input}\n${output}`, skills: problem.skills });
+  const skillIds = inferProblemSkills({ title: problem.title, searchText: `${description}\n${input}\n${output}`, skills: problem.skills, classification: problem.classification });
   const related = mastery.filter((item) => skillIds.includes(item.skillId));
   const prior = related.length ? related.reduce((sum, item) => sum + item.score, 0) / related.length : 0.25;
   const judgeOutcome = outcome(attempt);
