@@ -1,0 +1,39 @@
+汇森AI GOAI 初赛材料制作前基线（2026-08-16）
+
+npm test
+  172 test files passed
+  732 tests passed
+
+npm run lint
+  passed
+
+npm run typecheck
+  web passed
+  gateway passed
+
+npm run build:web
+  passed
+  123 modules transformed
+  main JavaScript 360.73 kB
+  CSS 159.56 kB
+
+Gateway health
+  GET http://127.0.0.1:8787/healthz
+  HTTP 200
+  mentor.storage = postgres
+  mentor.identity = permissive-local
+  mentor.model = deepseek-chat
+
+Content catalog
+  754 problems indexed
+
+Mentor quality gate
+  4 scored cases
+  0 / 100 eligible real teacher-adjudicated cases
+  gate remains red by design
+
+Hidden judge quality
+  754 total problems
+  0 gold packages
+  overall gate remains red
+
