@@ -4,6 +4,14 @@
 
 汇森AI 是品牌名，“自适应个性化 AI 算法教练”是首款产品。它面向零基础与非科班学习者，用“入口诊断 → 通俗微课 → 状态预测 → 局部编码 → 代码取证 → 最小提示 → 陌生迁移 → 延迟复测”的闭环，帮助学习者把听懂转化为独立完成能力。
 
+## 产品 Demo
+
+3 分 19 秒完整演示：AI 入门诊断 → 个性化学习计划 → 沉浸式训练 → Mentor 错因分析 → 项目实训 → 成长回放。
+
+https://github.com/user-attachments/assets/92ee2524-0ac4-42a7-9ea9-aed626db0a90
+
+[观看 1080p 原版与版本说明](https://github.com/Benjamindaoson/huisen-ai-adaptive-algorithm-coach/releases/tag/goai-2026-submission-v1)
+
 ## GOAI 2026 初赛材料
 
 - [作品简介](docs/submission/goai-2026/01-汇森AI-作品简介.txt)
