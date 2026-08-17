@@ -4809,6 +4809,7 @@ Date: 2026-08-17
 | External SVG resources or scripts | Not applicable | 0 | Passed |
 
 - The full-size 1600×1060 render and a 760 px README-width render were visually inspected. No clipped text, overlapping cards, broken arrows, or missing layers were observed.
+- After push, the public GitHub README reported the SVG as complete with a 1600×1060 natural size and an 823×545 rendered size. The browser screenshot call timed out, so the public check proves loading and sizing; visual-layout evidence comes from the two local renders rather than an uncollected screenshot.
 - The SVG contains no `foreignObject`, script, external image, remote font, or external asset request; the only URI is the required SVG XML namespace.
 - Repository inspection confirmed the claims about tool-driven replanning, DeepSeek server-side configuration, Judge0 execution, event projection, transfer, and delayed review are represented in code or architecture documentation.
 - `git diff --check` passes apart from existing Windows LF→CRLF notices.
