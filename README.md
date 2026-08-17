@@ -120,20 +120,19 @@ npm --prefix web run dev -- --host 127.0.0.1
 
 ## 系统架构
 
-```mermaid
-flowchart TB
-    UI["React Web App<br/>训练舱 · 编辑器 · 成长回放"] --> API["Learning & Mentor Gateway"]
-    API --> LEARN["学习身份与事件<br/>PostgreSQL"]
-    API --> AGENT["Mentor Runtime<br/>DeepSeek + 确定性工具"]
-    AGENT --> JUDGE["隔离代码执行<br/>Judge0"]
-    AGENT --> KB["题目 · 参考解 · 技能 · 典型错误索引"]
-    API --> QUEUE["任务与会话<br/>Redis"]
-    API --> OBJECT["提交与判题材料<br/>MinIO"]
-    LEARN --> PLAN["能力投影与下一步训练"]
-    PLAN --> UI
-```
+<p align="center">
+  <a href="docs/assets/huisen-ai-product-intelligence-architecture.svg">
+    <img src="docs/assets/huisen-ai-product-intelligence-architecture.svg" alt="汇森 AI 学习智能系统：学习者体验、自适应学习编排、Mentor Agent 验证循环、可信学习记忆与工程安全底座" width="100%">
+  </a>
+</p>
 
-前端使用 React 19、TypeScript、Vite 和 Monaco Editor；后端网关负责身份、学习事件、Mentor 运行、代码执行与数据边界。核心学习判断从结构化证据投影，不允许模型凭感觉直接修改能力分数。
+这套架构的中心不是某个模型，而是一个持续学习的证据闭环：
+
+| 自适应编排 | 可验证 Mentor | 可信学习记忆 | 独立掌握验证 |
+|---|---|---|---|
+| 根据目标、基础、错误、提示依赖和遗忘情况选择下一步 | Agent 自主选择工具，验证假设，证据不足时重规划或停止 | 每次判断绑定提交快照、运行结果、工具轨迹和代码差异 | 只有不同表面的迁移任务与延迟复测，才构成更强的掌握证据 |
+
+React、DeepSeek、Judge0、PostgreSQL、Redis 和 MinIO 是可替换的工程底座；真正持续积累的是可信内容、真实错误提交和经过迁移验证的纵向学习证据。
 
 ## 当前状态
 

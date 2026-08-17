@@ -1,0 +1,349 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1060" viewBox="0 0 1600 1060" role="img" aria-labelledby="title description">
+  <title id="title">汇森 AI 学习智能系统架构</title>
+  <desc id="description">展示学习者体验、自适应学习编排、Mentor Agent 验证循环、可信学习记忆以及工程与安全底座之间的闭环。</desc>
+  <defs>
+    <linearGradient id="canvas" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8FAFF"/>
+      <stop offset="0.55" stop-color="#F7F8FC"/>
+      <stop offset="1" stop-color="#F1F5F9"/>
+    </linearGradient>
+    <linearGradient id="orchestrator" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#425BE8"/>
+      <stop offset="0.52" stop-color="#5B55E8"/>
+      <stop offset="1" stop-color="#7250D9"/>
+    </linearGradient>
+    <linearGradient id="agentCore" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111D35"/>
+      <stop offset="1" stop-color="#17233F"/>
+    </linearGradient>
+    <linearGradient id="memoryGlow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F4F1FF"/>
+      <stop offset="1" stop-color="#F0F7FF"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#16213A" flood-opacity="0.10"/>
+    </filter>
+    <filter id="smallShadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#16213A" flood-opacity="0.08"/>
+    </filter>
+    <pattern id="dotGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#7180A6" opacity="0.14"/>
+    </pattern>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#4F63E8"/>
+    </marker>
+    <marker id="arrowLight" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#9FB0FF"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#18A37C"/>
+    </marker>
+    <style>
+      text { font-family: Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 2.6px; fill: #52617A; }
+      .title { font-size: 34px; font-weight: 760; fill: #101828; }
+      .subtitle { font-size: 16px; font-weight: 450; fill: #667085; }
+      .layerIndex { font-size: 12px; font-weight: 800; letter-spacing: 1.5px; fill: #53627A; }
+      .layerName { font-size: 17px; font-weight: 700; fill: #18243B; }
+      .cardTitle { font-size: 17px; font-weight: 700; fill: #16223A; }
+      .cardBody { font-size: 13px; font-weight: 450; fill: #67748B; }
+      .white { fill: #FFFFFF; }
+      .whiteMuted { fill: #DDE5FF; }
+      .darkMuted { fill: #718096; }
+      .tiny { font-size: 12px; font-weight: 600; }
+      .small { font-size: 13px; font-weight: 600; }
+      .medium { font-size: 15px; font-weight: 650; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="1060" rx="28" fill="url(#canvas)"/>
+  <rect width="1600" height="1060" rx="28" fill="url(#dotGrid)"/>
+
+  <!-- Header -->
+  <g>
+    <rect x="60" y="48" width="10" height="72" rx="5" fill="#4F63E8"/>
+    <text x="92" y="66" class="eyebrow">PRODUCT INTELLIGENCE ARCHITECTURE</text>
+    <text x="92" y="106" class="title">汇森 AI · 学习智能系统</text>
+    <text x="92" y="134" class="subtitle">把一次真实学习行为，变成下一步可解释、可验证的训练</text>
+
+    <g transform="translate(1000 55)">
+      <rect width="164" height="68" rx="18" fill="#EEF2FF" stroke="#DDE4FF"/>
+      <circle cx="24" cy="23" r="8" fill="#5268ED"/>
+      <text x="42" y="28" class="tiny" fill="#3447B8">01 · 更容易学会</text>
+      <text x="22" y="50" class="tiny" fill="#6B7390">理解与动手衔接</text>
+    </g>
+    <g transform="translate(1178 55)">
+      <rect width="164" height="68" rx="18" fill="#F5F0FF" stroke="#E5D9FF"/>
+      <circle cx="24" cy="23" r="8" fill="#7655D9"/>
+      <text x="42" y="28" class="tiny" fill="#593AAE">02 · 更牢固掌握</text>
+      <text x="22" y="50" class="tiny" fill="#6B7390">迁移与延迟复测</text>
+    </g>
+    <g transform="translate(1356 55)">
+      <rect width="184" height="68" rx="18" fill="#ECF9F5" stroke="#CDEFE3"/>
+      <circle cx="24" cy="23" r="8" fill="#18A37C"/>
+      <text x="42" y="28" class="tiny" fill="#107158">03 · 真正用出来</text>
+      <text x="22" y="50" class="tiny" fill="#6B7390">考试与项目证据</text>
+    </g>
+  </g>
+
+  <!-- Layer 01: experience -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="168" width="1480" height="134" rx="24" fill="#FFFFFF" stroke="#E2E8F2"/>
+  </g>
+  <g>
+    <text x="88" y="202" class="layerIndex">01 · EXPERIENCE</text>
+    <text x="88" y="230" class="layerName">学习者体验</text>
+    <text x="88" y="254" class="cardBody">AI 始终工作在任务中，</text>
+    <text x="88" y="274" class="cardBody">而不是藏在聊天窗口里。</text>
+    <line x1="238" y1="192" x2="238" y2="278" stroke="#E5EAF2"/>
+
+    <g transform="translate(266 204)">
+      <rect width="226" height="70" rx="18" fill="#F7F8FF" stroke="#DCE2FF"/>
+      <circle cx="28" cy="35" r="17" fill="#E7EBFF"/>
+      <path d="M21 35h14M28 28v14" stroke="#4F63E8" stroke-width="2.2" stroke-linecap="round"/>
+      <text x="56" y="31" class="cardTitle">AI 入门诊断</text>
+      <text x="56" y="52" class="cardBody">先理解你，再安排起点</text>
+    </g>
+    <path d="M500 239h20" stroke="#C6CEDC" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <g transform="translate(532 204)">
+      <rect width="226" height="70" rx="18" fill="#F7F8FF" stroke="#DCE2FF"/>
+      <circle cx="28" cy="35" r="17" fill="#E7EBFF"/>
+      <path d="M22 29h12v12H22zM26 26h12v12" fill="none" stroke="#4F63E8" stroke-width="2"/>
+      <text x="56" y="31" class="cardTitle">10 分钟训练舱</text>
+      <text x="56" y="52" class="cardBody">微课 · 预测 · 局部编码</text>
+    </g>
+    <path d="M766 239h20" stroke="#C6CEDC" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <g transform="translate(798 204)">
+      <rect width="226" height="70" rx="18" fill="#F7F8FF" stroke="#DCE2FF"/>
+      <circle cx="28" cy="35" r="17" fill="#E7EBFF"/>
+      <path d="M21 31l-5 4 5 4M35 31l5 4-5 4M31 27l-6 16" fill="none" stroke="#4F63E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="56" y="31" class="cardTitle">代码工作台</text>
+      <text x="56" y="52" class="cardBody">运行后触发上下文诊断</text>
+    </g>
+    <path d="M1032 239h20" stroke="#C6CEDC" stroke-width="2" marker-end="url(#arrowBlue)"/>
+    <g transform="translate(1064 204)">
+      <rect width="226" height="70" rx="18" fill="#F7F8FF" stroke="#DCE2FF"/>
+      <circle cx="28" cy="35" r="17" fill="#E7EBFF"/>
+      <path d="M20 42V28h16v14M18 42h20" fill="none" stroke="#4F63E8" stroke-width="2" stroke-linejoin="round"/>
+      <text x="56" y="31" class="cardTitle">考试与项目实训</text>
+      <text x="56" y="52" class="cardBody">从算法能力走向真实任务</text>
+    </g>
+    <path d="M1298 239h20" stroke="#C6CEDC" stroke-width="2" marker-end="url(#arrowGreen)"/>
+    <g transform="translate(1330 204)">
+      <rect width="182" height="70" rx="18" fill="#F0FBF7" stroke="#CDEFE3"/>
+      <circle cx="28" cy="35" r="17" fill="#DDF5ED"/>
+      <path d="M19 39l6-7 5 4 8-10M35 26h3v3" fill="none" stroke="#18A37C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="56" y="31" class="cardTitle">成长回放</text>
+      <text x="56" y="52" class="cardBody">看见从不会到会</text>
+    </g>
+  </g>
+
+  <path d="M800 302v24" stroke="#697AED" stroke-width="3" marker-end="url(#arrowBlue)"/>
+
+  <!-- Layer 02: orchestration -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="338" width="1480" height="170" rx="26" fill="url(#orchestrator)"/>
+  </g>
+  <g>
+    <text x="92" y="374" class="layerIndex whiteMuted">02 · LEARNING ORCHESTRATOR</text>
+    <text x="92" y="412" font-size="29" font-weight="760" class="white">自适应学习编排器</text>
+    <text x="92" y="440" font-size="15" class="whiteMuted">目标、基础、时间与行为证据共同决定下一步；模型不能凭感觉修改掌握度。</text>
+
+    <g transform="translate(92 462)">
+      <rect width="118" height="28" rx="14" fill="#FFFFFF" opacity="0.13"/>
+      <text x="59" y="19" text-anchor="middle" class="tiny white">学习目标</text>
+      <rect x="130" width="118" height="28" rx="14" fill="#FFFFFF" opacity="0.13"/>
+      <text x="189" y="19" text-anchor="middle" class="tiny white">知识基础</text>
+      <rect x="260" width="118" height="28" rx="14" fill="#FFFFFF" opacity="0.13"/>
+      <text x="319" y="19" text-anchor="middle" class="tiny white">错误与卡点</text>
+      <rect x="390" width="118" height="28" rx="14" fill="#FFFFFF" opacity="0.13"/>
+      <text x="449" y="19" text-anchor="middle" class="tiny white">提示依赖</text>
+      <rect x="520" width="142" height="28" rx="14" fill="#FFFFFF" opacity="0.13"/>
+      <text x="591" y="19" text-anchor="middle" class="tiny white">遗忘与迁移表现</text>
+    </g>
+
+    <path d="M790 423h83" stroke="#C7D0FF" stroke-width="3" marker-end="url(#arrowLight)"/>
+    <g transform="translate(895 362)">
+      <rect width="615" height="122" rx="21" fill="#FFFFFF" opacity="0.97"/>
+      <text x="26" y="32" class="layerIndex" fill="#4A56B6">NEXT BEST ACTION</text>
+      <text x="26" y="61" class="cardTitle">此刻最有价值的学习动作</text>
+      <g transform="translate(26 78)">
+        <rect width="94" height="27" rx="13.5" fill="#EEF1FF"/>
+        <text x="47" y="18" text-anchor="middle" class="tiny" fill="#4052C6">先补概念</text>
+        <rect x="105" width="94" height="27" rx="13.5" fill="#EEF1FF"/>
+        <text x="152" y="18" text-anchor="middle" class="tiny" fill="#4052C6">立即练习</text>
+        <rect x="210" width="94" height="27" rx="13.5" fill="#F5F0FF"/>
+        <text x="257" y="18" text-anchor="middle" class="tiny" fill="#6543B5">进入调试</text>
+        <rect x="315" width="94" height="27" rx="13.5" fill="#F5F0FF"/>
+        <text x="362" y="18" text-anchor="middle" class="tiny" fill="#6543B5">迁移挑战</text>
+        <rect x="420" width="120" height="27" rx="13.5" fill="#E9F8F3"/>
+        <text x="480" y="18" text-anchor="middle" class="tiny" fill="#13795E">延迟复测</text>
+      </g>
+    </g>
+  </g>
+
+  <path d="M800 508v22" stroke="#697AED" stroke-width="3" marker-end="url(#arrowBlue)"/>
+
+  <!-- Layer 03: Mentor runtime -->
+  <g filter="url(#shadow)">
+    <rect x="60" y="542" width="1012" height="328" rx="26" fill="url(#agentCore)"/>
+  </g>
+  <g>
+    <text x="92" y="579" class="layerIndex whiteMuted">03 · MENTOR AGENT RUNTIME</text>
+    <text x="92" y="616" font-size="27" font-weight="760" class="white">会验证、会重规划，也知道何时停止</text>
+    <text x="92" y="641" font-size="14" class="whiteMuted">每次分析绑定提交快照、运行结果、工具调用与代码差异，不是一次泛聊天。</text>
+
+    <g transform="translate(92 672)">
+      <rect width="132" height="80" rx="16" fill="#FFFFFF" opacity="0.08" stroke="#65749C"/>
+      <circle cx="22" cy="22" r="12" fill="#4F63E8"/>
+      <text x="22" y="26" text-anchor="middle" class="tiny white">1</text>
+      <text x="18" y="50" class="medium white">观察上下文</text>
+      <text x="18" y="69" class="tiny whiteMuted">代码 · 输出 · 历史</text>
+      <path d="M137 40h15" stroke="#7281A8" stroke-width="2" marker-end="url(#arrowLight)"/>
+
+      <rect x="160" width="132" height="80" rx="16" fill="#FFFFFF" opacity="0.08" stroke="#65749C"/>
+      <circle cx="182" cy="22" r="12" fill="#5E63E7"/>
+      <text x="182" y="26" text-anchor="middle" class="tiny white">2</text>
+      <text x="178" y="50" class="medium white">提出假设</text>
+      <text x="178" y="69" class="tiny whiteMuted">计划下一步取证</text>
+      <path d="M297 40h15" stroke="#7281A8" stroke-width="2" marker-end="url(#arrowLight)"/>
+
+      <rect x="320" width="132" height="80" rx="16" fill="#FFFFFF" opacity="0.08" stroke="#65749C"/>
+      <circle cx="342" cy="22" r="12" fill="#6E5DE0"/>
+      <text x="342" y="26" text-anchor="middle" class="tiny white">3</text>
+      <text x="338" y="50" class="medium white">选择工具</text>
+      <text x="338" y="69" class="tiny whiteMuted">自己决定参数</text>
+      <path d="M457 40h15" stroke="#7281A8" stroke-width="2" marker-end="url(#arrowLight)"/>
+
+      <rect x="480" width="132" height="80" rx="16" fill="#FFFFFF" opacity="0.08" stroke="#65749C"/>
+      <circle cx="502" cy="22" r="12" fill="#7655D9"/>
+      <text x="502" y="26" text-anchor="middle" class="tiny white">4</text>
+      <text x="498" y="50" class="medium white">验证诊断</text>
+      <text x="498" y="69" class="tiny whiteMuted">证据不足则承认</text>
+      <path d="M617 40h15" stroke="#7281A8" stroke-width="2" marker-end="url(#arrowLight)"/>
+
+      <rect x="640" width="132" height="80" rx="16" fill="#FFFFFF" opacity="0.08" stroke="#65749C"/>
+      <circle cx="662" cy="22" r="12" fill="#397DBB"/>
+      <text x="662" y="26" text-anchor="middle" class="tiny white">5</text>
+      <text x="658" y="50" class="medium white">最小教学</text>
+      <text x="658" y="69" class="tiny whiteMuted">只给必要提示</text>
+      <path d="M777 40h15" stroke="#7281A8" stroke-width="2" marker-end="url(#arrowGreen)"/>
+
+      <rect x="800" width="132" height="80" rx="16" fill="#143B3A" stroke="#2D8D75"/>
+      <circle cx="822" cy="22" r="12" fill="#18A37C"/>
+      <text x="822" y="26" text-anchor="middle" class="tiny white">6</text>
+      <text x="818" y="50" class="medium white">重规划 / 停止</text>
+      <text x="818" y="69" class="tiny" fill="#BCEBDE">修改后再次验证</text>
+    </g>
+
+    <path d="M954 748 C990 790 960 818 902 818 H220 C155 818 142 786 166 758" fill="none" stroke="#4C5D86" stroke-width="2" stroke-dasharray="6 7" marker-end="url(#arrowLight)"/>
+    <text x="548" y="812" text-anchor="middle" class="tiny whiteMuted">新证据改变假设 → Agent 自动重新规划</text>
+
+    <g transform="translate(92 828)">
+      <text x="0" y="0" class="layerIndex whiteMuted">DETERMINISTIC TOOLS</text>
+      <text x="190" y="0" class="small" fill="#B8C6ED">AST / CFG / 数据流</text>
+      <circle cx="330" cy="-5" r="2.5" fill="#6D7DA5"/>
+      <text x="348" y="0" class="small" fill="#B8C6ED">隔离执行</text>
+      <circle cx="428" cy="-5" r="2.5" fill="#6D7DA5"/>
+      <text x="446" y="0" class="small" fill="#B8C6ED">差分测试</text>
+      <circle cx="526" cy="-5" r="2.5" fill="#6D7DA5"/>
+      <text x="544" y="0" class="small" fill="#B8C6ED">可信 RAG</text>
+      <circle cx="630" cy="-5" r="2.5" fill="#6D7DA5"/>
+      <text x="648" y="0" class="small" fill="#B8C6ED">代码 Diff</text>
+      <circle cx="742" cy="-5" r="2.5" fill="#6D7DA5"/>
+      <text x="760" y="0" class="small" fill="#B8C6ED">自动生成测试</text>
+    </g>
+  </g>
+
+  <!-- Layer 03b: trusted learning memory -->
+  <g filter="url(#shadow)">
+    <rect x="1096" y="542" width="444" height="328" rx="26" fill="url(#memoryGlow)" stroke="#DED8F8"/>
+  </g>
+  <g>
+    <text x="1124" y="579" class="layerIndex" fill="#6C51B8">TRUSTED LEARNING MEMORY</text>
+    <text x="1124" y="616" font-size="27" font-weight="760" fill="#18223A">可信学习记忆</text>
+    <text x="1124" y="641" class="cardBody">记录“为什么会”，而不只是一个分数。</text>
+
+    <g transform="translate(1124 670)">
+      <rect width="184" height="58" rx="15" fill="#FFFFFF" stroke="#E2DDF4"/>
+      <circle cx="23" cy="29" r="10" fill="#E9E3FB"/>
+      <path d="M19 30l3 3 6-8" fill="none" stroke="#7052C9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="43" y="25" class="small" fill="#3F3566">学习者数字孪生</text>
+      <text x="43" y="43" class="tiny darkMuted">误区 · 独立性 · 遗忘</text>
+
+      <rect x="200" width="184" height="58" rx="15" fill="#FFFFFF" stroke="#E2DDF4"/>
+      <circle cx="223" cy="29" r="10" fill="#E9E3FB"/>
+      <circle cx="219" cy="26" r="2" fill="#7052C9"/>
+      <circle cx="227" cy="26" r="2" fill="#7052C9"/>
+      <circle cx="223" cy="34" r="2" fill="#7052C9"/>
+      <path d="M220 27l3 6 3-6" fill="none" stroke="#7052C9" stroke-width="1.5"/>
+      <text x="243" y="25" class="small" fill="#3F3566">技能与先修图谱</text>
+      <text x="243" y="43" class="tiny darkMuted">概念 · 题型 · 迁移关系</text>
+
+      <rect y="72" width="184" height="58" rx="15" fill="#FFFFFF" stroke="#E2DDF4"/>
+      <circle cx="23" cy="101" r="10" fill="#E9E3FB"/>
+      <path d="M18 97h10v8H18zM20 94h10v8" fill="none" stroke="#7052C9" stroke-width="1.7"/>
+      <text x="43" y="97" class="small" fill="#3F3566">不可变提交证据</text>
+      <text x="43" y="115" class="tiny darkMuted">快照 · 工具 · Agent 轨迹</text>
+
+      <rect x="200" y="72" width="184" height="58" rx="15" fill="#FFFFFF" stroke="#E2DDF4"/>
+      <circle cx="223" cy="101" r="10" fill="#DDF5ED"/>
+      <path d="M218 101h10M225 97l4 4-4 4" fill="none" stroke="#168864" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="243" y="97" class="small" fill="#3F3566">迁移与延迟复测</text>
+      <text x="243" y="115" class="tiny darkMuted">不同表面 · 间隔验证</text>
+    </g>
+
+    <g transform="translate(1124 820)">
+      <rect width="388" height="34" rx="17" fill="#DDF5ED"/>
+      <circle cx="18" cy="17" r="6" fill="#18A37C"/>
+      <text x="34" y="22" class="small" fill="#12664F">只有独立证据，才更新掌握度</text>
+    </g>
+  </g>
+
+  <!-- Evidence feedback -->
+  <path d="M1320 542 C1518 520 1563 470 1538 408" fill="none" stroke="#18A37C" stroke-width="2.5" stroke-dasharray="7 7" marker-end="url(#arrowGreen)"/>
+  <rect x="1428" y="491" width="95" height="26" rx="13" fill="#E9F8F3"/>
+  <text x="1475" y="509" text-anchor="middle" class="tiny" fill="#13795E">证据反馈</text>
+
+  <!-- Layer 04: foundation -->
+  <g filter="url(#smallShadow)">
+    <rect x="60" y="902" width="1480" height="92" rx="22" fill="#FFFFFF" stroke="#E1E7F0"/>
+  </g>
+  <g>
+    <text x="88" y="934" class="layerIndex">04 · ENGINEERING &amp; SAFETY FOUNDATION</text>
+    <text x="88" y="965" class="layerName">工程与安全底座</text>
+    <line x1="262" y1="924" x2="262" y2="973" stroke="#E5EAF2"/>
+
+    <g transform="translate(292 927)">
+      <rect width="116" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="58" y="24" text-anchor="middle" class="small" fill="#46536B">React Web</text>
+      <rect x="128" width="118" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="187" y="24" text-anchor="middle" class="small" fill="#46536B">API Gateway</text>
+      <rect x="258" width="112" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="314" y="24" text-anchor="middle" class="small" fill="#46536B">DeepSeek</text>
+      <rect x="382" width="142" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="453" y="24" text-anchor="middle" class="small" fill="#46536B">Judge0 隔离执行</text>
+      <rect x="536" width="126" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="599" y="24" text-anchor="middle" class="small" fill="#46536B">PostgreSQL</text>
+      <rect x="674" width="82" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="715" y="24" text-anchor="middle" class="small" fill="#46536B">Redis</text>
+      <rect x="768" width="82" height="38" rx="12" fill="#F5F7FA" stroke="#E5E9F0"/>
+      <text x="809" y="24" text-anchor="middle" class="small" fill="#46536B">MinIO</text>
+    </g>
+
+    <g transform="translate(1170 920)">
+      <rect width="166" height="52" rx="14" fill="#F7F8FF" stroke="#DDE3FA"/>
+      <circle cx="20" cy="26" r="7" fill="#5368E8"/>
+      <text x="35" y="22" class="tiny" fill="#3C4DAD">模型不直接改分</text>
+      <text x="35" y="39" class="tiny darkMuted">能力更新来自事件投影</text>
+      <rect x="178" width="166" height="52" rx="14" fill="#F0FBF7" stroke="#D4EEE5"/>
+      <circle cx="198" cy="26" r="7" fill="#18A37C"/>
+      <text x="213" y="22" class="tiny" fill="#176A55">密钥只在服务端</text>
+      <text x="213" y="39" class="tiny darkMuted">失败时展示真实降级</text>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <text x="60" y="1030" font-size="14" font-weight="650" fill="#53627A">可替换的是模型与工具；持续沉淀的是可信内容、真实错误与经过迁移验证的学习证据。</text>
+  <text x="1540" y="1030" text-anchor="end" class="eyebrow" fill="#7A879D">HUISEN AI · 2026</text>
+</svg>
