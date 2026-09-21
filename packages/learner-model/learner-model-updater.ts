@@ -1,9 +1,28 @@
-import type { EvidenceEvent } from '../../contracts/evidence-event';
+import type { EvidenceEvent, EvidenceType } from '../../contracts/evidence-event';
 import {
   LEARNER_SKILL_STATE_CONTRACT_VERSION,
   validateLearnerSkillState,
   type LearnerSkillState,
 } from '../../contracts/learner-skill-state';
+
+const LEARNER_SIGNAL_TYPES = new Set<EvidenceType>([
+  'concept_check',
+  'code_submission',
+  'test_result',
+  'hint_request',
+  'project_verification',
+  'transfer_result',
+  'delayed_retest',
+]);
+
+const CAPABILITY_EVIDENCE_TYPES = new Set<EvidenceType>([
+  'concept_check',
+  'code_submission',
+  'test_result',
+  'project_verification',
+  'transfer_result',
+  'delayed_retest',
+]);
 
 function average(values: readonly number[]): number {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -19,11 +38,22 @@ function eventScore(event: EvidenceEvent): number | undefined {
   return undefined;
 }
 
+export function isLearnerSignalEvidence(event: EvidenceEvent): boolean {
+  return LEARNER_SIGNAL_TYPES.has(event.evidenceType);
+}
+
+export function isCapabilityEvidence(event: EvidenceEvent): boolean {
+  return CAPABILITY_EVIDENCE_TYPES.has(event.evidenceType);
+}
+
 export class LearnerModelUpdater {
   project(learnerId: string, skillId: string, sourceEvents: readonly EvidenceEvent[]): LearnerSkillState {
     const events = sourceEvents
       .filter((event) => event.learnerId === learnerId && event.skillId === skillId)
+      .filter(isLearnerSignalEvidence)
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
+
+    const capabilityEvents = events.filter(isCapabilityEvidence);
 
     const concept: number[] = [];
     const implementation: number[] = [];
@@ -47,7 +77,7 @@ export class LearnerModelUpdater {
         if (event.evidenceType === 'delayed_retest') retention.push(score);
       }
 
-      if (event.independent !== undefined && score !== undefined) {
+      if (event.independent !== undefined && score !== undefined && isCapabilityEvidence(event)) {
         independence.push(event.independent ? score : 0);
       }
       if (event.evidenceType === 'hint_request' && event.hintLevel !== undefined) {
@@ -78,18 +108,18 @@ export class LearnerModelUpdater {
       ? 0
       : weighted.reduce((sum, [value, weight]) => sum + value * weight, 0) / totalWeight;
 
-    const lastPracticedAt = events.length ? events[events.length - 1].createdAt : null;
-    const nextReviewAt = lastPracticedAt
-      ? new Date(Date.parse(lastPracticedAt) + 7 * 24 * 60 * 60 * 1000).toISOString()
+    const lastCapabilityAt = capabilityEvents.length ? capabilityEvents[capabilityEvents.length - 1].createdAt : null;
+    const nextReviewAt = lastCapabilityAt
+      ? new Date(Date.parse(lastCapabilityAt) + 7 * 24 * 60 * 60 * 1000).toISOString()
       : null;
-    const updatedAt = lastPracticedAt ?? new Date(0).toISOString();
+    const updatedAt = events.length ? events[events.length - 1].createdAt : new Date(0).toISOString();
 
     return validateLearnerSkillState({
       contractVersion: LEARNER_SKILL_STATE_CONTRACT_VERSION,
       learnerId,
       skillId,
       mastery: clamp01(mastery),
-      uncertainty: Math.max(0.05, 1 / Math.sqrt(events.length + 1)),
+      uncertainty: capabilityEvents.length === 0 ? 1 : Math.max(0.05, 1 / Math.sqrt(capabilityEvents.length + 1)),
       conceptScore: clamp01(conceptScore),
       implementationScore: clamp01(implementationScore),
       debuggingScore: clamp01(debuggingScore),
@@ -97,9 +127,9 @@ export class LearnerModelUpdater {
       hintDependency: clamp01(hintScore),
       transferScore: clamp01(transferScore),
       retentionScore: clamp01(retentionScore),
-      evidenceCount: events.length,
+      evidenceCount: capabilityEvents.length,
       misconceptionTags: [...misconceptions].sort(),
-      lastPracticedAt,
+      lastPracticedAt: lastCapabilityAt,
       nextReviewAt,
       updatedAt,
     });
