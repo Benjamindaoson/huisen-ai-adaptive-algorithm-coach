@@ -255,3 +255,36 @@ P0/P1 is considered complete when:
 9. One RAG skill progresses through an E2E adaptive loop.
 10. Tests and architecture documentation cover the above.
 
+
+
+## 13. P2 Tutor Runtime
+
+P2 adds a single evidence-gated Tutor Runtime above the P0/P1 contracts.
+
+```text
+Question
+  ↓
+Route
+  ↓
+Retrieve
+  ↓
+Safety Filter
+  ↓
+Evidence Gate
+  ↓
+Answer / Clarify / Refuse
+  ↓
+Citation + Trace
+  ↓
+EvidenceEvent(retrieval_trace)
+```
+
+The Tutor Runtime may observe and explain evidence, but its retrieval trace does not directly mutate mastery. Only learner-model evidence types accepted by `LearnerModelUpdater` can change the projected learner state.
+
+This preserves a strict boundary:
+
+```text
+Tutor interaction ≠ proof of mastery
+```
+
+The detailed Tutor contract is documented in `docs/architecture/tutor-runtime.md`.

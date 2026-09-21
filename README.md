@@ -218,6 +218,53 @@ This repository already contains substantial learning-product infrastructure and
 
 The current UI still reflects the earlier algorithm-coach product. UI restructuring is intentionally deferred until the new core contracts are stable.
 
+## P2: unified Tutor Runtime
+
+P2 absorbs the **teaching intelligence** from the former StuckToShip product without importing its standalone UI.
+
+The migrated Tutor Runtime now owns:
+
+```text
+Learner question
+      ↓
+Intent routing
+      ↓
+Course RAG / Code RAG / FAQ / Error Diagnosis
+      ↓
+Safety filtering
+  - source presence
+  - ACL
+  - prompt-injection blocking
+      ↓
+Evidence Gate
+      ↓
+Grounded answer or clarification/refusal
+      ↓
+Citation + Trace
+      ↓
+EvidenceEvent
+```
+
+Implemented modules:
+
+- `services/tutor/router.ts` — course, learning-path, code, FAQ, error and clarification routing.
+- `services/tutor/retrievers.ts` — course retrieval, symbol-level Code RAG, FAQ fast path and structured error recipes.
+- `services/tutor/safety.ts` — ACL and prompt-injection filtering before generation.
+- `services/tutor/evidence-gate.ts` — independently testable accept/retry/clarify-or-refuse gate.
+- `services/tutor/citations.ts` — stable source/file/line citation projection.
+- `services/tutor/runtime.ts` — one Tutor orchestration path.
+- `tests/tutor-runtime-p2.test.ts` — migration and trust-boundary regression tests.
+
+Every valid Tutor interaction appends a `retrieval_trace` EvidenceEvent, including clarification and refusal outcomes.
+
+Crucially, retrieval traces are **observability evidence, not mastery evidence**. They are stored for auditability but are filtered out by `LearnerModelUpdater`, so simply asking the Tutor cannot improve a learner's mastery score or reduce uncertainty.
+
+The StuckToShip UI, FastAPI shell and product branding are intentionally not migrated.
+
+See [Tutor Runtime architecture](docs/architecture/tutor-runtime.md) and [P2 migration manifest](docs/migrations/stuck-to-ship-p2.md).
+
+---
+
 ## Planned integration boundaries
 
 The final product will not copy every existing repository into one process.

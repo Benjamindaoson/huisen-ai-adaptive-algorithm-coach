@@ -1,19 +1,9 @@
-import type { EvidenceEvent, EvidenceType } from '../../contracts/evidence-event';
+import type { EvidenceEvent } from '../../contracts/evidence-event';
 import {
   LEARNER_SKILL_STATE_CONTRACT_VERSION,
   validateLearnerSkillState,
   type LearnerSkillState,
 } from '../../contracts/learner-skill-state';
-
-const LEARNER_MODEL_EVIDENCE_TYPES = new Set<EvidenceType>([
-  'concept_check',
-  'code_submission',
-  'test_result',
-  'hint_request',
-  'project_verification',
-  'transfer_result',
-  'delayed_retest',
-]);
 
 function average(values: readonly number[]): number {
   return values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
@@ -29,15 +19,10 @@ function eventScore(event: EvidenceEvent): number | undefined {
   return undefined;
 }
 
-export function isLearnerModelEvidence(event: EvidenceEvent): boolean {
-  return LEARNER_MODEL_EVIDENCE_TYPES.has(event.evidenceType);
-}
-
 export class LearnerModelUpdater {
   project(learnerId: string, skillId: string, sourceEvents: readonly EvidenceEvent[]): LearnerSkillState {
     const events = sourceEvents
       .filter((event) => event.learnerId === learnerId && event.skillId === skillId)
-      .filter(isLearnerModelEvidence)
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id));
 
     const concept: number[] = [];
@@ -104,7 +89,7 @@ export class LearnerModelUpdater {
       learnerId,
       skillId,
       mastery: clamp01(mastery),
-      uncertainty: events.length === 0 ? 1 : Math.max(0.05, 1 / Math.sqrt(events.length + 1)),
+      uncertainty: Math.max(0.05, 1 / Math.sqrt(events.length + 1)),
       conceptScore: clamp01(conceptScore),
       implementationScore: clamp01(implementationScore),
       debuggingScore: clamp01(debuggingScore),
