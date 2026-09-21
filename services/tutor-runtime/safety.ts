@@ -1,4 +1,6 @@
-import type { TutorCandidate } from '../../contracts/tutor-runtime';\n\nexport type TutorBlockedEvidence = Readonly<{ reason: 'missing_source' | 'acl_denied' | 'prompt_injection'; id: string; sourcePath: string }>;
+import type { TutorCandidate } from '../../contracts/tutor-runtime';
+
+export type TutorBlockedEvidence = Readonly<{ reason: 'missing_source' | 'acl_denied' | 'prompt_injection'; id: string; sourcePath: string }>;
 
 const PROMPT_INJECTION_PATTERNS = [
   /ignore (all )?(previous|prior|above) instructions/i,
