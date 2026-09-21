@@ -4,6 +4,7 @@ import type { EvidenceStore } from '../../packages/evidence/evidence-store';
 import { citationsFrom, gateTutorEvidence } from './evidence-gate';
 import { routeTutorQuery } from './intent-router';
 import { retrieveCode, retrieveCourse, retrieveError, retrieveFaq, type CodeSymbol, type CourseDoc, type ErrorRecipe, type FaqRecord } from './retrievers';
+import { filterTutorEvidence } from './safety';
 
 export type TutorRuntimeCorpus=Readonly<{
   courseDocs?:readonly CourseDoc[];
@@ -12,13 +13,15 @@ export type TutorRuntimeCorpus=Readonly<{
   faqs?:readonly FaqRecord[];
 }>;
 
+export type TutorRuntimeRequest=TutorRequest & Readonly<{userId?:string}>;
+
 export class TutorRuntime {
   constructor(
     readonly corpus:TutorRuntimeCorpus,
     readonly evidence:EvidenceStore,
   ) {}
 
-  run(request:TutorRequest):TutorResponse {
+  run(request:TutorRuntimeRequest):TutorResponse {
     const traceId=`tutor:${request.sessionId??'session'}:${Date.now()}:${Math.random().toString(36).slice(2,8)}`;
     const route=routeTutorQuery(request.query);
     this.record(request,traceId,'tool_trace','route',0,{route:route.route,reason:route.reason,confidence:route.confidence});
@@ -26,38 +29,68 @@ export class TutorRuntime {
     if(route.needsClarification){
       const action: TutorAction='clarify';
       this.record(request,traceId,'learning_event','intervention',1,{action,reason:route.reason});
-      return {route:route.route,action,answer:'Please add the course topic, code file, full error, or concept you want explained.',citations:[],needsClarification:true,evidenceDecision:'clarify_or_refuse',traceId};
+      return {
+        route:route.route,
+        action,
+        answer:'Please add the course topic, code file, full error, or concept you want explained.',
+        citations:[],
+        needsClarification:true,
+        evidenceDecision:'clarify_or_refuse',
+        traceId
+      };
     }
 
-    const candidates=this.retrieve(request.query,route.route);
+    const rawCandidates=this.retrieve(request.query,route.route);
+    const {allowed,blocked}=filterTutorEvidence(rawCandidates,request.userId);
+
     this.record(request,traceId,'retrieval_trace','retrieval',1,{
       route:route.route,
-      candidateCount:candidates.length,
-      sources:candidates.map(c=>c.sourcePath)
+      candidateCount:rawCandidates.length,
+      allowedCount:allowed.length,
+      blockedReasons:blocked.map(item=>item.reason),
+      sources:allowed.map(c=>c.sourcePath)
     });
 
-    const gate=gateTutorEvidence(candidates);
-    this.record(request,traceId,'tool_trace','evidence_gate',2,{action:gate.action,reason:gate.reason,confidence:gate.confidence});
+    const gate=gateTutorEvidence(allowed);
+    const gateReason=blocked.length>0 && allowed.length===0 ? blocked[0].reason : gate.reason;
+    this.record(request,traceId,'tool_trace','evidence_gate',2,{
+      action:gate.action,
+      reason:gateReason,
+      confidence:gate.confidence,
+      blockedCount:blocked.length
+    });
 
-    const citations=citationsFrom(candidates);
+    const citations=citationsFrom(allowed);
     if(gate.action!=='accept'){
       const action: TutorAction='refuse';
-      this.record(request,traceId,'learning_event','intervention',3,{action,reason:gate.reason});
+      this.record(request,traceId,'learning_event','intervention',3,{action,reason:gateReason});
       return {
-        route:route.route,action,
-        answer:'I do not have enough cited evidence to answer this reliably. Add a course chapter, code file, full error, or runtime context.',
-        citations,needsClarification:true,evidenceDecision:'clarify_or_refuse',traceId
+        route:route.route,
+        action,
+        answer:'I do not have enough safe, cited evidence to answer this reliably. Add an approved course source, code file, full error, or runtime context.',
+        citations,
+        needsClarification:true,
+        evidenceDecision:'clarify_or_refuse',
+        traceId
       };
     }
 
     const action=this.actionFor(route.route);
-    const answer=this.groundedAnswer(route.route,candidates);
+    const answer=this.groundedAnswer(route.route,allowed);
     this.record(request,traceId,'learning_event','intervention',3,{
       action,
       citationCount:citations.length,
       sourceTypes:[...new Set(citations.map(c=>c.sourceType))]
     });
-    return {route:route.route,action,answer,citations,needsClarification:false,evidenceDecision:'accept',traceId};
+    return {
+      route:route.route,
+      action,
+      answer,
+      citations,
+      needsClarification:false,
+      evidenceDecision:'accept',
+      traceId
+    };
   }
 
   private retrieve(query:string,route:string):TutorCandidate[] {
@@ -80,13 +113,22 @@ export class TutorRuntime {
     if(route==='faq' && first) return first.text;
     if(route==='error' && first){
       const cause=String(first.metadata?.cause??'');
-      const steps=Array.isArray(first.metadata?.fixSteps)?first.metadata?.fixSteps.join('; '):'';
+      const steps=Array.isArray(first.metadata?.fixSteps)
+        ? first.metadata?.fixSteps.filter((value):value is string=>typeof value==='string').join('; ')
+        : '';
       return `Likely cause: ${cause}. Fix: ${steps}`;
     }
     return 'Based on the cited learning evidence:\n'+candidates.slice(0,3).map(c=>`- ${c.title??c.sourcePath}: ${c.text.replace(/\s+/g,' ').slice(0,420)}`).join('\n');
   }
 
-  private record(request:TutorRequest,traceId:string,evidenceType:EvidenceEvent['evidenceType'],phase:string,ordinal:number,metadata:Record<string,unknown>):void {
+  private record(
+    request:TutorRuntimeRequest,
+    traceId:string,
+    evidenceType:EvidenceEvent['evidenceType'],
+    phase:string,
+    ordinal:number,
+    metadata:Record<string,unknown>,
+  ):void {
     this.evidence.append({
       contractVersion:EVIDENCE_EVENT_CONTRACT_VERSION,
       id:`${traceId}:${phase}`,

@@ -4,14 +4,26 @@ const TOKEN=/[a-zA-Z0-9_]+|[\u4e00-\u9fff]{2,}/g;
 const STOP=new Set(['a','an','and','are','before','does','for','how','in','is','it','of','or','should','the','to','what','when','where','why']);
 const LEARNING_TERMS=['learning path','study','roadmap','next','学习路径','下一步','先学'];
 
+type SourceAccess=Readonly<{
+  visibility?:'public'|'private'|'restricted';
+  allowedUsers?:readonly string[];
+}>;
+
 function tokens(text:string):string[] {
   return (text.match(TOKEN)??[]).map(x=>x.toLowerCase()).filter(x=>!STOP.has(x));
 }
 
-export type CourseDoc=Readonly<{id:string;title:string;text:string;sourcePath:string;tags?:readonly string[]}>;
-export type CodeSymbol=Readonly<{id:string;symbolName:string;symbolType:string;text:string;sourcePath:string;startLine:number;endLine:number}>;
-export type ErrorRecipe=Readonly<{id:string;errorPattern:string;symptom?:string;cause:string;fixSteps:readonly string[];verifyCommand?:string;sourcePath:string}>;
-export type FaqRecord=Readonly<{id:string;question:string;answer:string;sourcePath:string}>;
+function accessMetadata(source:SourceAccess):Record<string,unknown> {
+  return {
+    visibility:source.visibility??'public',
+    allowedUsers:source.allowedUsers??[],
+  };
+}
+
+export type CourseDoc=SourceAccess & Readonly<{id:string;title:string;text:string;sourcePath:string;tags?:readonly string[]}>;
+export type CodeSymbol=SourceAccess & Readonly<{id:string;symbolName:string;symbolType:string;text:string;sourcePath:string;startLine:number;endLine:number}>;
+export type ErrorRecipe=SourceAccess & Readonly<{id:string;errorPattern:string;symptom?:string;cause:string;fixSteps:readonly string[];verifyCommand?:string;sourcePath:string}>;
+export type FaqRecord=SourceAccess & Readonly<{id:string;question:string;answer:string;sourcePath:string}>;
 
 export function retrieveCourse(query:string, docs:readonly CourseDoc[], route:'course'|'learning_path', limit=5):TutorCandidate[] {
   const qt=tokens(query);
@@ -22,7 +34,15 @@ export function retrieveCourse(query:string, docs:readonly CourseDoc[], route:'c
     if (route==='learning_path' && LEARNING_TERMS.some(t=>hay.includes(t))) score=Math.max(score,0.72);
     return {doc,score};
   }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,limit);
-  return scored.map(({doc,score})=>({id:doc.id,text:doc.text,sourcePath:doc.sourcePath,sourceType:'course_note',score:Number(score.toFixed(4)),title:doc.title,metadata:{tags:doc.tags??[]}}));
+  return scored.map(({doc,score})=>({
+    id:doc.id,
+    text:doc.text,
+    sourcePath:doc.sourcePath,
+    sourceType:'course_note',
+    score:Number(score.toFixed(4)),
+    title:doc.title,
+    metadata:{tags:doc.tags??[],...accessMetadata(doc)}
+  }));
 }
 
 export function retrieveCode(query:string, symbols:readonly CodeSymbol[], limit=5):TutorCandidate[] {
@@ -35,9 +55,15 @@ export function retrieveCode(query:string, symbols:readonly CodeSymbol[], limit=
     if(qt.some(t=>hay.includes(t))) score+=0.5;
     return {symbol,score};
   }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,limit).map(({symbol,score})=>({
-    id:symbol.id,text:symbol.text,sourcePath:symbol.sourcePath,sourceType:'project_code',score,
-    symbolName:symbol.symbolName,startLine:symbol.startLine,endLine:symbol.endLine,
-    metadata:{symbolType:symbol.symbolType}
+    id:symbol.id,
+    text:symbol.text,
+    sourcePath:symbol.sourcePath,
+    sourceType:'project_code',
+    score,
+    symbolName:symbol.symbolName,
+    startLine:symbol.startLine,
+    endLine:symbol.endLine,
+    metadata:{symbolType:symbol.symbolType,...accessMetadata(symbol)}
   }));
 }
 
@@ -48,8 +74,15 @@ export function retrieveError(query:string, recipes:readonly ErrorRecipe[]):Tuto
   return [{
     id:item.id,
     text:[item.errorPattern,item.symptom??'',item.cause,item.fixSteps.join(' '),item.verifyCommand??''].join(' '),
-    sourcePath:item.sourcePath,sourceType:'error_recipe',score:1,
-    metadata:{cause:item.cause,fixSteps:item.fixSteps,verifyCommand:item.verifyCommand??''}
+    sourcePath:item.sourcePath,
+    sourceType:'error_recipe',
+    score:1,
+    metadata:{
+      cause:item.cause,
+      fixSteps:item.fixSteps,
+      verifyCommand:item.verifyCommand??'',
+      ...accessMetadata(item)
+    }
   }];
 }
 
@@ -65,5 +98,13 @@ function similarity(a:string,b:string):number {
 export function retrieveFaq(query:string, faqs:readonly FaqRecord[], threshold=0.58):TutorCandidate[] {
   const best=faqs.map(f=>({f,score:similarity(query,f.question)})).sort((a,b)=>b.score-a.score)[0];
   if(!best || best.score<threshold) return [];
-  return [{id:best.f.id,text:best.f.answer,sourcePath:best.f.sourcePath,sourceType:'faq',score:best.score,title:best.f.question}];
+  return [{
+    id:best.f.id,
+    text:best.f.answer,
+    sourcePath:best.f.sourcePath,
+    sourceType:'faq',
+    score:best.score,
+    title:best.f.question,
+    metadata:accessMetadata(best.f)
+  }];
 }
