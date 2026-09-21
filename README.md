@@ -223,6 +223,56 @@ A Tutor answer is **not** treated as mastery evidence. Tutor behavior is observa
 
 Source migration details: [docs/migrations/stuck-to-ship-p2.md](docs/migrations/stuck-to-ship-p2.md)
 
+## P3: Project Lab Gateway
+
+P3 connects **AI Engineering Project OS** as an external, read-only project verification runtime.
+
+The learning path is:
+
+```text
+Learning Task
+    ↓
+Student Repository
+    ↓
+Project Lab Gateway
+    ↓
+AI Engineering Project OS
+    ↓
+Import / Audit / Read-only Verify
+    ↓
+Engineering Evidence
+    ↓
+Learning Evidence Adapter
+    ↓
+Attribution Gate
+    ↓
+EvidenceEvent(project_verification)
+    ↓
+Learner Model
+```
+
+The integration deliberately does **not** call the Project OS autonomous code-modification path. Project Lab assessment must not edit learner code before measuring it.
+
+A technically passing repository is also **not automatically mastery evidence**. Before project evidence can affect the Learner Model, P3 requires:
+
+- Project OS verification passed;
+- learner attribution was explicitly verified;
+- independent completion was verified;
+- AI assistance is `none` or `limited`;
+- highest hint level is at most 2.
+
+If any requirement is missing, the engineering result is still stored as a trace, but learner mastery evidence is withheld.
+
+Canonical modules:
+
+- `contracts/project-lab.ts`
+- `services/project-lab/project-os-client.ts`
+- `services/project-lab/gateway.ts`
+- `services/project-lab/evidence-adapter.ts`
+- `tests/project-lab-p3.test.ts`
+
+See [Project Lab architecture](docs/architecture/project-lab.md).
+
 ## Architecture
 
 ```mermaid
@@ -308,7 +358,6 @@ This branch establishes the adaptive-learning core; it does **not** yet claim:
 
 - a complete LLM/RAG/Agent/Embodied curriculum
 - persistent production Evidence Store integration
-- AI Engineering Project OS gateway integration
 - Embodied simulation or real-robot integration
 - UI redesign under the new brand
 - measured educational effectiveness with real learners
@@ -320,8 +369,8 @@ Those are later phases and will be reported separately from implemented behavior
 1. Persist EvidenceEvent and LearnerSkillState in the authoritative backend.
 2. Wire Tutor Runtime to the existing trusted Mentor corpus and gateway endpoint.
 3. Add RAG and Agent curriculum nodes and task registry.
-4. Connect Project Lab through an explicit adapter to AI Engineering Project OS.
-5. Add Technical Defense and AI Talent Evidence Passport.
+4. Add Technical Defense and AI Talent Evidence Passport.
+5. Add commit-level / activity-level learner attribution for project work.
 6. Add Embodied Simulation evidence before ROS2 / real-robot execution.
 
 ## Product principle

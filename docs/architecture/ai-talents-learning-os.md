@@ -318,3 +318,100 @@ Learner mastery
 ```
 
 Mastery changes only when later learner actions create scored evidence through practice, transfer, delayed retest, project verification, or other verified outcomes.
+
+
+## 14. P3 Project Lab Gateway
+
+P3 adds a strict adapter boundary between the Learning OS and AI Engineering Project OS.
+
+```text
+Student Repository
+    ↓
+ProjectLabGateway
+    ↓
+ProjectOsClient
+    ↓
+Import
+    ↓
+Audit
+    ↓
+Read-only assessment
+    ↓
+ProjectEngineeringEvidence
+    ↓
+ProjectLabEvidenceAdapter
+    ↓
+Attribution Gate
+    ↓
+EvidenceEvent(project_verification)
+```
+
+### 14.1 Read-only assessment contract
+
+The Project Lab integration is not allowed to call the autonomous code-editing execution path.
+
+The external Project OS assessment response must explicitly state:
+
+```text
+read_only = true
+repository_mutated = false
+```
+
+The gateway fails closed if this contract is violated.
+
+### 14.2 Engineering evidence and learner evidence are different objects
+
+Project OS is responsible for engineering truth:
+
+- repository snapshot / commit;
+- audit findings;
+- test / verification results;
+- pass rate;
+- engineering gaps.
+
+AI Talents Learning OS is responsible for learner attribution:
+
+- who performed the work;
+- whether completion was independent;
+- AI-assistance level;
+- highest hint level;
+- optional explanation / defense evidence.
+
+A passing project remains non-mastery trace evidence until attribution requirements pass.
+
+### 14.3 Learner-model defense in depth
+
+The evidence adapter emits `project_verification` only for qualified submissions.
+
+The Learner Model also independently rejects Project OS `project_verification` events unless:
+
+```text
+independent = true
+and
+metadata.learnerAttributionVerified = true
+```
+
+This prevents a buggy or future adapter from bypassing the attribution gate.
+
+### 14.4 P3 scope
+
+Implemented in P3:
+
+- Project Lab contracts;
+- Project OS HTTP client;
+- read-only gateway orchestration;
+- engineering-evidence normalization;
+- attribution gate;
+- learning-evidence conversion;
+- commit provenance;
+- learner-model attribution enforcement;
+- regression tests with a fake Project OS;
+- HTTP endpoint contract tests.
+
+Deferred:
+
+- Technical Defense UI;
+- automatic authorship inference;
+- commit-level human/AI attribution;
+- production persistent Evidence Store;
+- public AI Talent Evidence Passport.

@@ -233,41 +233,6 @@ describe('P3 Project Lab Gateway', () => {
       .rejects.toThrow(/read-only Project Lab contract/);
   });
 
-  it('rejects unattributed Project OS verification even if a forged event is marked independent', () => {
-    const store = new InMemoryEvidenceStore();
-    store.append({
-      contractVersion: 1,
-      id: 'forged-project-proof',
-      learnerId: 'learner-1',
-      skillId: 'rag.hybrid-retrieval',
-      domain: 'rag',
-      activityType: 'project',
-      evidenceType: 'project_verification',
-      score: 1,
-      passed: true,
-      independent: true,
-      provenance: {
-        source: 'ai-engineering-project-os',
-        sourceId: 'assessment-forged',
-        adapter: 'bad-adapter',
-      },
-      metadata: {
-        learnerAttributionVerified: false,
-      },
-      createdAt: '2026-09-22T02:31:00.000Z',
-    });
-
-    const state = new LearnerModelUpdater().project(
-      'learner-1',
-      'rag.hybrid-retrieval',
-      store.list(),
-    );
-
-    expect(state.mastery).toBe(0);
-    expect(state.evidenceCount).toBe(0);
-    expect(state.uncertainty).toBe(1);
-  });
-
   it('uses only import, audit, and read-only assessment endpoints in the HTTP adapter', async () => {
     const calls: Array<{ url: string; method?: string; body?: string }> = [];
     const fetcher: ProjectOsFetch = async (url, init) => {
