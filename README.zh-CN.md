@@ -145,3 +145,47 @@ Next Learning Action
 
 因此 README 会明确区分“已经实现”和“后续目标”。
 
+
+
+## P3：Project Lab 项目实训网关
+
+P3 已把 **AI Engineering Project OS** 接入为外部、只读的项目评测 Runtime。
+
+```text
+Learning Task
+    ↓
+Student Repository
+    ↓
+Project Lab Gateway
+    ↓
+AI Engineering Project OS
+    ↓
+Import / Audit / Read-only Verify
+    ↓
+Engineering Evidence
+    ↓
+Learning Evidence Adapter
+    ↓
+Attribution Gate
+    ↓
+EvidenceEvent(project_verification)
+    ↓
+Learner Model
+```
+
+这里有两个强制边界：
+
+1. **评测不能自动修改学生代码**：Project Lab 不调用 Project OS 的自动升级执行链。
+2. **项目做对 ≠ 学生掌握**：只有完成学习者归因后，项目证据才允许进入 Learner Model。
+
+当前归因门要求：
+
+- Project OS Verification 通过；
+- Learner Attribution 已验证；
+- Independent Completion 已验证；
+- AI Assistance 只能是 `none` 或 `limited`；
+- 最高 Hint Level ≤ 2。
+
+不满足条件时，工程结果仍保留用于审计，但不会增加 Mastery。
+
+详细设计见：[Project Lab Architecture](docs/architecture/project-lab.md)。
