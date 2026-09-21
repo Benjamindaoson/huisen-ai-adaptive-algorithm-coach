@@ -43,7 +43,16 @@ export function isLearnerSignalEvidence(event: EvidenceEvent): boolean {
 }
 
 export function isCapabilityEvidence(event: EvidenceEvent): boolean {
-  return CAPABILITY_EVIDENCE_TYPES.has(event.evidenceType);
+  if (!CAPABILITY_EVIDENCE_TYPES.has(event.evidenceType)) return false;
+
+  if (event.evidenceType === 'project_verification') {
+    if (event.independent !== true) return false;
+    if (event.provenance.source === 'ai-engineering-project-os') {
+      return event.metadata?.learnerAttributionVerified === true;
+    }
+  }
+
+  return true;
 }
 
 export class LearnerModelUpdater {
