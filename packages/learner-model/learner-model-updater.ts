@@ -69,7 +69,7 @@ export class LearnerModelUpdater {
       if (score !== undefined) {
         if (event.evidenceType === 'concept_check') concept.push(score);
         if (event.evidenceType === 'code_submission' || event.evidenceType === 'test_result') implementation.push(score);
-        if (event.evidenceType === 'project_verification') {
+        if (event.evidenceType === 'project_verification' && isCapabilityEvidence(event)) {
           implementation.push(score);
           if (event.metadata?.dimension === 'debugging') debugging.push(score);
         }
