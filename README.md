@@ -186,6 +186,43 @@ Project-ready
 
 The point of this pilot is not to claim a complete RAG curriculum. It proves that the new contracts can drive one adaptive learning loop end to end.
 
+## P2: unified Tutor Runtime
+
+StuckToShip's durable Tutor capabilities have now been migrated into AI Talents Learning OS as an internal runtime rather than a separate product.
+
+The migrated path is:
+
+```text
+Learner question
+      ↓
+Intent Router
+      ↓
+Course / Code / Error / FAQ retrieval
+      ↓
+Evidence Gate
+      ↓
+Grounded Tutor action
+      ↓
+Citation + Trace
+      ↓
+EvidenceEvent
+```
+
+The runtime currently supports:
+
+- Course RAG
+- learning-path retrieval
+- Code RAG with line-aware citations
+- structured error diagnosis
+- FAQ retrieval
+- fail-closed evidence gating
+- bounded citations
+- Tutor trace emission into the shared Evidence Store
+
+A Tutor answer is **not** treated as mastery evidence. Tutor behavior is observable, but learner mastery still requires downstream evidence from attempts, tests, transfer, retest, or project verification.
+
+Source migration details: [docs/migrations/stuck-to-ship-p2.md](docs/migrations/stuck-to-ship-p2.md)
+
 ## Architecture
 
 ```mermaid
@@ -271,7 +308,6 @@ This branch establishes the adaptive-learning core; it does **not** yet claim:
 
 - a complete LLM/RAG/Agent/Embodied curriculum
 - persistent production Evidence Store integration
-- StuckToShip capability migration
 - AI Engineering Project OS gateway integration
 - Embodied simulation or real-robot integration
 - UI redesign under the new brand
@@ -282,7 +318,7 @@ Those are later phases and will be reported separately from implemented behavior
 ## Next phases
 
 1. Persist EvidenceEvent and LearnerSkillState in the authoritative backend.
-2. Migrate Tutor retrieval capabilities from StuckToShip.
+2. Wire Tutor Runtime to the existing trusted Mentor corpus and gateway endpoint.
 3. Add RAG and Agent curriculum nodes and task registry.
 4. Connect Project Lab through an explicit adapter to AI Engineering Project OS.
 5. Add Technical Defense and AI Talent Evidence Passport.
