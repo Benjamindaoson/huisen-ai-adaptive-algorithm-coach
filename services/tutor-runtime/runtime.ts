@@ -3,7 +3,7 @@ import type { TutorAction, TutorCandidate, TutorRequest, TutorResponse } from '.
 import type { EvidenceStore } from '../../packages/evidence/evidence-store';
 import { citationsFrom, gateTutorEvidence } from './evidence-gate';
 import { routeTutorQuery } from './intent-router';
-import { retrieveCode, retrieveCourse, retrieveError, retrieveFaq, type CodeSymbol, type CourseDoc, type ErrorRecipe, type FaqRecord } from './retrievers';
+import { retrieveCode, retrieveCourse, retrieveError, retrieveFaq, type CodeSymbol, type CourseDoc, type ErrorRecipe, type FaqRecord } from './retrievers';\nimport { filterTutorEvidence } from './safety';
 
 export type TutorRuntimeCorpus=Readonly<{
   courseDocs?:readonly CourseDoc[];
@@ -42,10 +42,10 @@ export class TutorRuntime {
     const citations=citationsFrom(candidates);
     if(gate.action!=='accept'){
       const action: TutorAction='refuse';
-      this.record(request,traceId,'learning_event','intervention',3,{action,reason:gate.reason});
+      this.record(request,traceId,'learning_event','intervention',3,{action,reason:gateReason});
       return {
         route:route.route,action,
-        answer:'I do not have enough cited evidence to answer this reliably. Add a course chapter, code file, full error, or runtime context.',
+        answer:'I do not have enough safe, cited evidence to answer this reliably. Add a course chapter, code file, full error, or runtime context.',
         citations,needsClarification:true,evidenceDecision:'clarify_or_refuse',traceId
       };
     }
@@ -94,7 +94,7 @@ export class TutorRuntime {
       skillId:request.skillId,
       taskId:request.taskId,
       sessionId:request.sessionId,
-      domain:request.skillId.startsWith('rag.')?'rag':request.skillId.startsWith('agent.')?'agent':request.skillId.startsWith('llm.')?'llm':'legacy',
+      domain:request.skillId.startsWith('rag.')?'rag':request.skillId.startsWith('agent.')?'agent':request.skillId.startsWith('llm.')?'llm':request.skillId.startsWith('embodied.')?'embodied-ai':'legacy',
       activityType:'learn',
       evidenceType,
       traceRef:traceId,

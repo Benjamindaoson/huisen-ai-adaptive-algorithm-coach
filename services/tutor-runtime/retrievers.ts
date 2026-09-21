@@ -1,4 +1,4 @@
-import type { TutorCandidate } from '../../contracts/tutor-runtime';
+import type { TutorCandidate, TutorSourceAccess } from '../../contracts/tutor-runtime';
 
 const TOKEN=/[a-zA-Z0-9_]+|[\u4e00-\u9fff]{2,}/g;
 const STOP=new Set(['a','an','and','are','before','does','for','how','in','is','it','of','or','should','the','to','what','when','where','why']);
@@ -22,7 +22,7 @@ export function retrieveCourse(query:string, docs:readonly CourseDoc[], route:'c
     if (route==='learning_path' && LEARNING_TERMS.some(t=>hay.includes(t))) score=Math.max(score,0.72);
     return {doc,score};
   }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,limit);
-  return scored.map(({doc,score})=>({id:doc.id,text:doc.text,sourcePath:doc.sourcePath,sourceType:'course_note',score:Number(score.toFixed(4)),title:doc.title,metadata:{tags:doc.tags??[]}}));
+  return scored.map(({doc,score})=>({id:doc.id,text:doc.text,sourcePath:doc.sourcePath,sourceType:'course_note',score:Number(score.toFixed(4)),title:doc.title,metadata:{tags:doc.tags??[]},...access(doc)}));
 }
 
 export function retrieveCode(query:string, symbols:readonly CodeSymbol[], limit=5):TutorCandidate[] {
@@ -65,5 +65,5 @@ function similarity(a:string,b:string):number {
 export function retrieveFaq(query:string, faqs:readonly FaqRecord[], threshold=0.58):TutorCandidate[] {
   const best=faqs.map(f=>({f,score:similarity(query,f.question)})).sort((a,b)=>b.score-a.score)[0];
   if(!best || best.score<threshold) return [];
-  return [{id:best.f.id,text:best.f.answer,sourcePath:best.f.sourcePath,sourceType:'faq',score:best.score,title:best.f.question}];
+  return [{id:best.f.id,text:best.f.answer,sourcePath:best.f.sourcePath,sourceType:'faq',score:best.score,title:best.f.question,...access(best.f)}];
 }
