@@ -8,7 +8,7 @@ export type TutorRouteDecision = Readonly<{
 }>;
 
 const ERROR = ['error','exception','traceback','modulenotfounderror','connection refused','unauthorized','报错','失败'];
-const CODE = ['main.py','.py','function','class','api','config','defined','source file','函数','类','接口','配置文件'];
+const CODE = ['main.py','.py','.ts','.tsx','.js','.jsx','function','class','api','config','defined','source file','函数','类','接口','配置文件'];
 const FAQ = ['api key','apikey','dashscope','how do i configure','怎么配置','多少钱','课程价格'];
 const LEARNING = ['next step','next steps','learning path','study path','roadmap','what should i learn','learn before','下一步','学习路径','先学','怎么学'];
 const AMBIGUOUS = new Set(['这个怎么弄？','怎么弄','不会','help','?']);

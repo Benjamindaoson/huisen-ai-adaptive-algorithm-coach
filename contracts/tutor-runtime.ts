@@ -4,6 +4,11 @@ export type TutorRoute = (typeof TUTOR_ROUTES)[number];
 export const TUTOR_ACTIONS = ['explain', 'point_to_code', 'diagnose_error', 'clarify', 'refuse'] as const;
 export type TutorAction = (typeof TUTOR_ACTIONS)[number];
 
+export type TutorSourceAccess = Readonly<{
+  visibility?: 'public' | 'private' | 'restricted';
+  allowedUsers?: readonly string[];
+}>;
+
 export type TutorCitation = Readonly<{
   sourcePath: string;
   sourceType: string;
@@ -14,7 +19,7 @@ export type TutorCitation = Readonly<{
   excerpt: string;
 }>;
 
-export type TutorCandidate = Readonly<{
+export type TutorCandidate = TutorSourceAccess & Readonly<{
   id: string;
   text: string;
   sourcePath: string;
