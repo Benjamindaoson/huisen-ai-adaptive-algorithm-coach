@@ -255,3 +255,66 @@ P0/P1 is considered complete when:
 9. One RAG skill progresses through an E2E adaptive loop.
 10. Tests and architecture documentation cover the above.
 
+
+
+## 13. P2 Tutor Runtime
+
+P2 absorbs the durable Tutor capabilities from StuckToShip into the canonical product runtime.
+
+The canonical Tutor flow is:
+
+```text
+TutorRequest
+    ↓
+Intent routing
+    ↓
+Retriever selection
+    ↓
+Evidence candidates
+    ↓
+Evidence gate
+    ↓
+Grounded response / clarify / refuse
+    ↓
+Citation contract
+    ↓
+Tutor EvidenceEvents
+```
+
+### Migrated capabilities
+
+- course retrieval
+- learning-path retrieval
+- code retrieval
+- error-recipe matching
+- FAQ matching
+- evidence gating
+- citations
+- traceable orchestration
+
+### Evidence behavior
+
+A successful Tutor turn produces an observable sequence:
+
+```text
+route
+retrieval
+evidence_gate
+intervention
+```
+
+These are persisted as EvidenceEvent records using `tool_trace`, `retrieval_trace`, and `learning_event` evidence types.
+
+They do not carry mastery scores by default.
+
+This prevents a Tutor explanation from being confused with proof that the learner can independently perform the skill.
+
+### P2 trust boundary
+
+```text
+Tutor says / explains / retrieves
+        ≠
+Learner mastery
+```
+
+Mastery changes only when later learner actions create scored evidence through practice, transfer, delayed retest, project verification, or other verified outcomes.
