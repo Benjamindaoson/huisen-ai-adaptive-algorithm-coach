@@ -1,3 +1,6 @@
+> **Portfolio status / 作品集状态：CASE STUDY · Learning Systems**
+> Independent adaptive-learning product case study.
+
 <div align="center">
 
 # 汇森AI
